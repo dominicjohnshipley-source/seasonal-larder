@@ -126,7 +126,7 @@ h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
 .group h2 .n{margin-left:auto;font-family:var(--f-script);font-size:20px;color:var(--ink-soft);letter-spacing:0}
 .group .squiggle{margin:4px 0 2px}
 .list{list-style:none;margin:0;padding:0}
-.item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;padding:10px 2px 12px;border-bottom:1px dashed var(--rule);cursor:pointer;user-select:none}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:10px 2px 12px;border-bottom:1px dashed var(--rule);cursor:pointer;user-select:none}
 .item:last-child{border-bottom:0}
 .item .name{font-size:20px;line-height:1.15;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px;row-gap:0}
 .note{font-family:var(--f-script);font-weight:700;font-size:18px;color:var(--k);white-space:nowrap}
@@ -175,7 +175,54 @@ h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
 .soon-scroll .chip .ico{width:22px;height:22px}
 .soon-scroll .chip .plus{font-family:var(--f-letter);font-size:20px;line-height:1;margin-left:2px;color:var(--ink-soft)}
 .soon-scroll .chip[aria-pressed="true"] .plus{color:var(--ink)}
-.toast button{border:0;margin-left:10px;color:var(--paper);text-decoration:underline;font-size:18px;padding:0}
+.toast button{border:0;margin-left:10px;white-space:nowrap;color:var(--paper);text-decoration:underline;font-size:18px;padding:0}
+
+/* Info button + ingredient card */
+.info{width:34px;height:34px;border:1.4px solid var(--ink-soft);border-radius:var(--wob2);font-family:var(--f-script);font-weight:700;font-size:21px;line-height:1;color:var(--ink-soft);display:grid;place-items:center;padding:0 0 2px}
+.info:active{background:var(--paper-2)}
+dialog.sheet{position:fixed;inset:auto 0 0 0;margin:0 auto;width:100%;max-width:720px;max-height:90vh;max-height:90dvh;border:0;padding:0;color:var(--ink);background:var(--paper);border-radius:26px 26px 0 0;box-shadow:0 -6px 30px rgba(43,39,35,.25);overflow:hidden}
+dialog.sheet::backdrop{background:rgba(43,39,35,.38)}
+dialog.sheet[open]{animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.sheet-in{max-height:90vh;max-height:90dvh;overflow-y:auto;overscroll-behavior:contain;padding:10px max(18px,env(safe-area-inset-right,0px)) 0 max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.grab{width:46px;height:5px;border-radius:3px;background:var(--rule);margin:0 auto 2px}
+.card-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.card-head .ico{width:56px;height:56px}
+.card-head h2{font-family:var(--f-letter);font-size:clamp(38px,11vw,54px);line-height:.95;letter-spacing:.02em;color:var(--k)}
+.card-head .cat{font-family:var(--f-script);font-size:19px;color:var(--ink-soft);line-height:1}
+.x{width:40px;height:40px;border:1.5px solid var(--ink);border-radius:var(--wob);display:grid;place-items:center;align-self:start}
+.x svg{width:16px;height:16px;stroke:var(--ink);stroke-width:2.2;fill:none;stroke-linecap:round}
+.status{font-family:var(--f-script);font-weight:700;font-size:22px;color:var(--k);line-height:1.1}
+.status.out{color:var(--ink-soft)}
+.card-bar .bar{max-width:none;gap:4px}
+.card-bar .bar i{height:12px}
+.card-bar .bar-lbl{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;font-family:var(--f-letter);font-size:17px;color:var(--ink-soft);text-align:center;margin-top:3px}
+.about{font-size:19px;line-height:1.45;margin:0}
+.facts{display:flex;flex-direction:column;gap:12px}
+.fact h4{margin:0 0 2px;font-family:var(--f-script);font-weight:700;font-size:21px;color:var(--k);line-height:1.1}
+.fact p{margin:0;font-size:17px;line-height:1.45}
+.caution{border:1.6px dashed #B23F48;border-radius:var(--wob2);padding:10px 12px;font-size:16px;line-height:1.4;color:var(--ink);background:color-mix(in srgb,#EE8F8A 14%,transparent)}
+.caution b{font-family:var(--f-script);font-size:20px;color:#B23F48;margin-right:4px}
+.pairs{display:flex;flex-wrap:wrap;gap:6px}
+.pairs .chip{padding:4px 10px 4px 6px}
+.pairs .chip .ico{width:22px;height:22px}
+.pairs .chip.off{opacity:.55}
+.extras{font-family:var(--f-script);font-size:20px;color:var(--ink-soft);line-height:1.2}
+.card-foot{position:sticky;bottom:0;background:var(--paper);padding:10px 0 calc(12px + env(safe-area-inset-bottom,0px));margin-top:2px;border-top:1px dashed var(--rule)}
+.card-add{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);padding:10px;font-family:var(--f-letter);font-size:30px;letter-spacing:.04em;color:var(--ink);background:
+  radial-gradient(ellipse 60% 70% at 30% 40%, color-mix(in srgb,var(--w) 75%,transparent), transparent 75%),color-mix(in srgb,var(--w) 45%,transparent)}
+.card-add.on{background:var(--ink);color:var(--paper)}
+.nodata{font-size:16px;color:var(--ink-soft)}
+
+/* Send-to */
+.sendto{display:flex;flex-direction:column;gap:8px}
+.send-row{display:flex;flex-wrap:wrap;gap:6px}
+.send{border:1.5px solid var(--ink);border-radius:var(--wob);padding:6px 12px;font-size:17px;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:transparent}
+.send:nth-child(even){border-radius:var(--wob2)}
+.send small{font-family:var(--f-script);font-size:15px;color:var(--ink-soft)}
+.share{border:1.6px solid var(--ink);border-radius:var(--wob2);padding:10px 14px;font-family:var(--f-letter);font-size:28px;letter-spacing:.04em;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--ink);background:
+  radial-gradient(ellipse 60% 70% at 30% 40%, color-mix(in srgb,#72A9D8 65%,transparent), transparent 75%),color-mix(in srgb,#72A9D8 35%,transparent)}
+.share svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
 /* Dock */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -228,7 +275,7 @@ textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);backg
   background:radial-gradient(ellipse 55% 70% at 30% 40%, #F28C5B, transparent 75%),radial-gradient(ellipse 50% 60% at 75% 60%, color-mix(in srgb,#E3B24C 85%,transparent), transparent 75%),color-mix(in srgb,#F28C5B 55%,transparent)}
 .copy svg{width:24px;height:24px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round}
 .copy-note{font-family:var(--f-script);font-size:20px;color:var(--ink-soft);display:flex;gap:6px;align-items:center}
-.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) rotate(-2deg) translateY(10px);background:var(--ink);color:var(--paper);padding:8px 18px;border-radius:var(--wob);font-size:18px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) rotate(-2deg) translateY(10px);background:var(--ink);color:var(--paper);padding:8px 18px;border-radius:var(--wob);font-size:18px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:calc(100vw - 32px);width:max-content;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) rotate(-2deg) translateY(0)}
 .nosel{text-align:center;padding:36px 12px;color:var(--ink-soft);font-size:19px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .primary{border:1.6px solid var(--ink);border-radius:var(--wob);padding:8px 18px;font-family:var(--f-letter);font-size:26px;letter-spacing:.04em;color:var(--ink);background:color-mix(in srgb,#8DBF5A 45%,transparent)}
@@ -299,6 +346,7 @@ textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);backg
     </nav>
   </div>
 </div>
+<dialog class="sheet" id="card" aria-labelledby="cardTitle"><div class="sheet-in" id="cardIn"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -643,19 +691,93 @@ function renderSoon(){
 }
 $("#soon").addEventListener("click",e=>{const b=e.target.closest("[data-soon]");if(b)toggle(b.dataset.soon)});
 
-/* surprise basket: 1 protein, 2 veg, 1 fruit/nut, 1 herb/wild/mushroom, weighted to peak */
+/* Ingredient notes + pairings (info.json, loaded in the background) */
+let INFO=null;const PAIR={};
+fetch("info.json").then(r=>r.ok?r.json():null).then(j=>{if(!j)return;INFO=j;
+  DATA.forEach(d=>PAIR[d.id]=new Set());
+  Object.entries(j).forEach(([n,v])=>{const a=BYNAME[n];if(!a)return;(v.pairs||[]).forEach(p=>{const b=BYNAME[p];if(b&&b!==a){PAIR[a.id].add(b.id);PAIR[b.id].add(a.id)}})});
+  if(cardId)renderCard();
+}).catch(()=>{});
+const linked=(a,b)=>!!(PAIR[a.id]&&PAIR[a.id].has(b.id));
+
+/* Ingredient card */
+let cardId=null;
+function statusLine(d){
+  const m=NOW;
+  if(d.year)return {t:"Available all year"+(d.peak.size?", best "+rangeText(d.peak):""),out:false};
+  if(d.months.has(m)){
+    if(m===d.end&&d.months.size>1)return {t:"Last chance: finishes after "+MONTHS[m-1],out:false};
+    if(m===d.start&&d.months.size>1)return {t:"Just in: the season starts now",out:false};
+    if(d.peak.has(m))return {t:"At its best right now",out:false};
+    return {t:"In season now, until "+MONTHS[d.end-1],out:false};
+  }
+  let k=m,n=0;while(!d.months.has(k)&&n<12){k=k%12+1;n++}
+  return {t:"Out of season. Back in "+MONTHS[k-1],out:true};
+}
+function rangeText(set){const a=[...set];if(!a.length)return "";
+  let start=a.find(x=>!set.has(x===1?12:x-1))||a[0],end=start;while(set.has(end%12+1)&&end%12+1!==start)end=end%12+1;
+  return start===end?M3[start-1]:M3[start-1]+"–"+M3[end-1]}
+function renderCard(){
+  const d=BYID[cardId];if(!d)return;const inf=INFO&&INFO[d.name];const on=state.sel.has(d.id);const st=statusLine(d);
+  let bar='<div class="bar" aria-hidden="true">';for(let m=1;m<=12;m++)bar+=`<i class="${d.peak.has(m)?"pk":d.months.has(m)?"on":""}${m===NOW?" cur":""}"></i>`;bar+='</div><div class="bar-lbl">'+M3.map(x=>`<span>${x[0]}</span>`).join("")+'</div>';
+  let body="";
+  if(inf){
+    const mo=state.month||NOW;
+    const pairs=(inf.pairs||[]).map(n=>BYNAME[n]).filter(Boolean).sort((a,b)=>b.months.has(mo)-a.months.has(mo));
+    body=`<p class="about">${esc(inf.about)}</p>
+    ${inf.caution?`<div class="caution"><b>Take care:</b>${esc(inf.caution)}</div>`:""}
+    <div class="facts">
+      <div class="fact"><h4>choosing</h4><p>${esc(inf.choose)}</p></div>
+      <div class="fact"><h4>storing</h4><p>${esc(inf.store)}</p></div>
+      <div class="fact"><h4>prep &amp; cooking</h4><p>${esc(inf.prep)}</p></div>
+      ${pairs.length?`<div class="fact"><h4>goes well with</h4><div class="pairs">${pairs.map(p=>`<button class="chip c-${p.cat}${p.months.has(mo)?"":" off"}" data-card="${p.id}" aria-pressed="${state.sel.has(p.id)}">${ico(p.cat)}${esc(p.name)}</button>`).join("")}</div></div>`:""}
+      ${inf.extras&&inf.extras.length?`<div class="fact"><h4>and from the cupboard</h4><div class="extras">${inf.extras.map(esc).join(" · ")}</div></div>`:""}
+    </div>`;
+  }else body=`<p class="nodata">${INFO===null?"Loading notes…":"No notes for this one yet."}</p>`;
+  const el=$("#cardIn");el.className="sheet-in c-"+d.cat;
+  el.innerHTML=`<div class="grab"></div>
+  <div class="card-head">${ico(d.cat)}<div><div class="cat">${esc(CATNAME[d.cat].toLowerCase())}${d.imp?" · imported":""}</div><h2 id="cardTitle">${esc(d.name)}</h2></div>
+    <button class="x" id="cardClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="status${st.out?" out":""}">${esc(st.t)}</div>
+  <div class="card-bar">${bar}</div>
+  ${body}
+  <div class="card-foot"><button class="card-add${on?" on":""}" id="cardAdd">${on?"✓ In your basket":"+ Add to basket"}</button></div>`;
+}
+function openCard(id){
+  cardId=id;renderCard();const dlg=$("#card");
+  if(!dlg.open){try{dlg.showModal()}catch(e){dlg.setAttribute("open","")}try{history.pushState({card:1},"")}catch(e){}}
+  $("#cardIn").scrollTop=0;
+}
+function closeCard(fromPop){const dlg=$("#card");if(!dlg.open)return;try{dlg.close()}catch(e){dlg.removeAttribute("open")}cardId=null;
+  if(!fromPop){try{if(history.state&&history.state.card)history.back()}catch(e){}}}
+window.addEventListener("popstate",()=>{if($("#card").open)closeCard(true)});
+$("#card").addEventListener("cancel",e=>{e.preventDefault();closeCard()});
+$("#card").addEventListener("click",e=>{
+  if(e.target===$("#card")){closeCard();return}
+  if(e.target.closest("#cardClose")){closeCard();return}
+  if(e.target.closest("#cardAdd")){toggle(cardId);renderCard();return}
+  const c=e.target.closest("[data-card]");if(c)openCard(c.dataset.card);
+});
+
+/* Surprise basket: a fish or meat first, then veg, fruit or nut, and a herb, wild green or mushroom,
+   each picked to go with what's already in the basket (from the pairing notes), leaning to what's at its best. */
 function surprise(){
   const m=state.month||NOW;
   const pool=DATA.filter(d=>d.months.has(m)&&!d.year&&!d.imp);
   const picked=[];
-  const take=(cats,n)=>{let c=pool.filter(d=>cats.includes(d.cat)&&!picked.includes(d));
-    for(let k=0;k<n&&c.length;k++){const w=c.map(d=>d.peak.has(m)?3:1),t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t,i=0;while((r-=w[i])>0)i++;picked.push(c[i]);c.splice(i,1)}};
-  take(["fish","shell","meat"],1);take(["veg"],2);take(["fruit","nut"],1);take(["herb","wild","fungi"],1);
+  const pickOne=cats=>{
+    const c=pool.filter(d=>cats.includes(d.cat)&&!picked.includes(d));if(!c.length)return;
+    const w=c.map(d=>{const base=d.peak.has(m)?2.5:1;if(!INFO||!picked.length)return base;
+      const links=picked.reduce((n,p)=>n+(linked(d,p)?1:0),0);return base*(links?Math.pow(4,links):0.08)});
+    const t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t,i=0;while((r-=w[i])>0&&i<c.length-1)i++;picked.push(c[i]);
+  };
+  pickOne(["fish","shell","meat"]);pickOne(["veg"]);pickOne(["fruit","nut"]);pickOne(["herb","wild","fungi"]);pickOne(["veg"]);
   if(!picked.length){toast("Nothing in season to pick from");return}
   const prev=new Set(state.sel);
   state.sel=new Set(picked.map(d=>d.id));save();
   state.cat="all";renderList();renderTray();if(view==="prompt")renderPrompt();
-  toast("Fresh basket for "+MONTHS[m-1],()=>{state.sel=prev;save();renderList();renderTray();if(view==="prompt")renderPrompt()});
+  const lead=picked[0].name.toLowerCase(),rest=picked.slice(1,3).map(d=>d.name.toLowerCase());
+  toast(rest.length?`${picked[0].name} with ${rest.join(" & ")}…`:"Fresh basket for "+MONTHS[m-1],()=>{state.sel=prev;save();renderList();renderTray();if(view==="prompt")renderPrompt()});
 }
 $("#surpriseBtn").addEventListener("click",surprise);
 
@@ -676,7 +798,7 @@ function renderList(){
     html+=`<section class="group c-${k}"><h2>${ico(k)}${esc(l)}<span class="n">${g.length} in season</span></h2>${squiggle()}<ul class="list">`+
       g.map(d=>{const on=state.sel.has(d.id);return `<li class="item${on?" sel":""}" data-id="${d.id}" role="button" tabindex="0" aria-pressed="${on}" aria-label="${esc(d.name)}, ${seasonText(d)}">
         <div style="min-width:0"><div class="name">${esc(d.name)}${notes(d)}</div>${bar(d)}</div>
-        <span class="add" aria-hidden="true">${on?ICON_TICK:ICON_PLUS}</span></li>`}).join("")+`</ul></section>`;
+        <button class="info" data-info="${d.id}" aria-label="About ${esc(d.name)}">i</button><span class="add" aria-hidden="true">${on?ICON_TICK:ICON_PLUS}</span></li>`}).join("")+`</ul></section>`;
   });
   if(!m)html=html.replace(/ in season<\/span>/g,"</span>");
   $("#list").innerHTML=html;
@@ -689,7 +811,7 @@ function toggle(id){
   renderTray();renderSoon();
   if(view==="prompt")renderPrompt();
 }
-$("#list").addEventListener("click",e=>{const li=e.target.closest(".item");if(li)toggle(li.dataset.id)});
+$("#list").addEventListener("click",e=>{const inf=e.target.closest("[data-info]");if(inf){openCard(inf.dataset.info);return}const li=e.target.closest(".item");if(li)toggle(li.dataset.id)});
 $("#list").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("item")){e.preventDefault();toggle(e.target.dataset.id)}});
 
 /* tray */
@@ -785,7 +907,13 @@ function renderPrompt(){
       <textarea id="optExtra" placeholder="e.g. one-pot only, no oven, kids eating, using up leftover roast chicken">${esc(o.extra)}</textarea></div>`)+
   step(3,"c-fruit","Copy &amp; paste",`
     <button class="copy" id="copyBtn"><svg viewBox="0 0 24 24"><path d="M9.2 9.1c3.6-.2 7.2-.2 10.8 0 .2 3.6.2 7.3 0 10.9-3.6.2-7.2.2-10.8 0-.2-3.6-.2-7.3 0-10.9z"/><path d="M5 15.2c-.2-3.4-.1-6.8.1-10.2 3.3-.2 6.7-.2 10.1 0"/></svg>Copy the prompt</button>
-    <div class="copy-note">↓ here's what you'll be pasting</div>
+    <div class="sendto">
+      ${canShare?`<button class="share" id="shareBtn"><svg viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.3 10.8l7.4-4.1M8.3 13.2l7.4 4.1"/></svg>Send to an app…</button>`:""}
+      <span class="lbl">or open it in</span>
+      <div class="send-row">${SENDTO.map((x,i)=>`<a class="send" data-send="${i}" href="${x.home}" target="_blank" rel="noopener">${x.name}${x.q?"":" <small>(paste)</small>"}</a>`).join("")}</div>
+      <p class="hint">Tapping one also copies the prompt, so if it arrives empty, just paste.</p>
+    </div>
+    <div class="copy-note">↓ here's what you'll be sending</div>
     <div class="out"><pre id="promptOut" tabindex="0"></pre></div>`);
   $("#promptOut").textContent=buildPrompt();
   if(active==="optExtra"){const t=$("#optExtra");t.focus();t.setSelectionRange(t.value.length,t.value.length)}
@@ -800,6 +928,9 @@ $("#pvBody").addEventListener("click",e=>{
     g.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",g.dataset.multi?o[k].includes(b.dataset.v):String(o[k])===b.dataset.v));
     save();$("#promptOut").textContent=buildPrompt();return}
   if(e.target.closest("#copyBtn"))copyPrompt();
+  if(e.target.closest("#shareBtn"))sharePrompt();
+  const sd=e.target.closest("[data-send]");if(sd){const x=SENDTO[+sd.dataset.send];const text=buildPrompt();
+    sd.href=x.q?x.q+encodeURIComponent(text):x.home;copyQuiet(text,x.q?"Opening "+x.name+"… (prompt copied too)":"Copied. Paste it into "+x.name+".")}
 });
 $("#pvBody").addEventListener("change",e=>{const o=state.opts;
   if(e.target.id==="optAll")o.mode=e.target.checked?"all":"core";
@@ -808,6 +939,17 @@ $("#pvBody").addEventListener("change",e=>{const o=state.opts;
   save();$("#promptOut").textContent=buildPrompt()});
 $("#pvBody").addEventListener("input",e=>{if(e.target.id==="optExtra"){state.opts.extra=e.target.value;save();$("#promptOut").textContent=buildPrompt()}});
 
+const SENDTO=[
+  {name:"ChatGPT",q:"https://chatgpt.com/?q=",home:"https://chatgpt.com/"},
+  {name:"Claude",q:"https://claude.ai/new?q=",home:"https://claude.ai/new"},
+  {name:"Perplexity",q:"https://www.perplexity.ai/search/new?q=",home:"https://www.perplexity.ai/"},
+  {name:"Copilot",q:"https://copilot.microsoft.com/?q=",home:"https://copilot.microsoft.com/"},
+  {name:"Gemini",q:"",home:"https://gemini.google.com/app"}
+];
+const canShare=typeof navigator.share==="function";
+function copyQuiet(text,msg){try{navigator.clipboard.writeText(text).then(()=>toast(msg),()=>{})}catch(e){}}
+function sharePrompt(){const text=buildPrompt();
+  try{navigator.share({title:"Seasonal recipe ideas",text}).catch(err=>{if(err&&err.name!=="AbortError")copyPrompt()})}catch(e){copyPrompt()}}
 function copyPrompt(){
   const text=buildPrompt();
   const fallback=()=>{const pre=$("#promptOut");const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);let ok=false;try{ok=document.execCommand("copy")}catch(e){}toast(ok?"Copied! Off you go.":"Selected. Use your phone's Copy.")};

@@ -11,8 +11,9 @@ Seasonal Larder lists over 220 ingredients (vegetables, fruit, herbs, wild and f
 - **Last chance and coming soon:** what finishes this month and what arrives next month.
 - **Filters:** narrow the list by category, or search for an ingredient.
 - **Basket:** tap ingredients to add them. Your basket is saved on your device.
-- **Surprise me:** one tap builds a balanced basket from what's best this month.
-- **Recipe prompt:** set servings, meal, time, diet, cuisine or mood, skill level and number of ideas, then copy the prompt in one tap.
+- **Ingredient cards:** tap the *i* next to any ingredient for an introduction, how to choose, store and prep it, what it goes with, and any safety notes.
+- **Surprise me:** one tap builds a basket of things that are at their best this month and go well together.
+- **Recipe prompt:** set servings, meal, time, diet, cuisine or mood, skill level and number of ideas. Then copy the prompt, send it to any app with your phone's share button, or open it straight in ChatGPT, Claude, Perplexity, Copilot or Gemini.
 - **Installable and offline:** add it to your home screen and it works without a signal once you've opened it.
 
 ## Privacy
@@ -43,9 +44,13 @@ The seasons were checked against these sources in November 2026:
 
 Spotted a season that's wrong? Open an issue or a pull request.
 
+### Ingredient notes
+
+The ingredient cards are in `info.json`, one entry per ingredient name, with `about`, `choose`, `store`, `prep`, `pairs` (other ingredient names from the list, which Surprise me uses to build baskets that go together), `extras` and an optional `caution`. The notes are general kitchen guidance. Always be certain of the identification before eating anything foraged.
+
 ### Editing the data
 
-All the ingredients are in `index.html`, in the block that starts `const RAW=`. There's one ingredient per line, in this format:
+The seasons are in `index.html`, in the block that starts `const RAW=`. There's one ingredient per line, in this format:
 
 ```
 Name|category|season months|peak months|flags

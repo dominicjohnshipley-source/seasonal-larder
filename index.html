@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FDFCF8">
+<title>Seasonal Larder</title>
+<meta name="description" content="What's in season in the UK this month: fruit, veg, herbs, fish, game and more. Pick ingredients and get a ready-made AI recipe prompt.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta property="og:title" content="Seasonal Larder">
+<meta property="og:description" content="What's in season in the UK right now, and a one-tap AI recipe prompt for it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Caveat:wght@500;700&family=Patrick+Hand&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+/* Layout: an illustrated cookbook page on a phone. Ink line work + watercolour washes on paper, hand-lettered heads,
+   handwritten annotations. One colour per ingredient family. Deliberately single (light, paper) theme. */
+:root{
+  color-scheme:light;
+  --paper:#FDFCF8; --paper-2:#F5F2EA; --ink:#2B2723; --ink-soft:#6E665D; --rule:#D9D3C7;
+  --f-letter:"Amatic SC","Patrick Hand",ui-sans-serif,sans-serif;
+  --f-script:"Caveat","Patrick Hand",cursive;
+  --f-hand:"Patrick Hand","Segoe Print","Comic Sans MS",ui-sans-serif,sans-serif;
+  --f-mono:ui-monospace,"SFMono-Regular","Roboto Mono",Menlo,Consolas,monospace;
+  --wob:255px 18px 225px 16px/16px 225px 18px 255px;
+  --wob2:18px 230px 20px 240px/220px 18px 250px 16px;
+  --nav-h:66px;
+  /* family colours: --w wash, --k ink */
+  --w:#9AA39A; --k:#4E574F;
+}
+.c-veg{--w:#8DBF5A;--k:#3F7A2A}
+.c-fruit{--w:#F28C5B;--k:#BF4E26}
+.c-herb{--w:#B9C45A;--k:#66751B}
+.c-wild{--w:#6FB8A8;--k:#2A786A}
+.c-fungi{--w:#CDA46C;--k:#85602E}
+.c-fish{--w:#72A9D8;--k:#2D699B}
+.c-shell{--w:#EE8F8A;--k:#B23F48}
+.c-meat{--w:#BF5D82;--k:#8A2E52}
+.c-nut{--w:#E3B24C;--k:#946C12}
+.c-any{--w:#B5AEA2;--k:#2B2723}
+
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{background-color:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color:var(--ink);font-family:var(--f-hand);font-size:17px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(var(--nav-h) + 100px + env(safe-area-inset-bottom,0px))}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none}
+:focus-visible{outline:2px dashed var(--ink);outline-offset:3px}
+h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
+
+/* watercolour wash: layered uneven pigment, irregular edge */
+.wash{background:
+  radial-gradient(ellipse 60% 70% at 28% 38%, color-mix(in srgb,var(--w) 60%,transparent), transparent 70%),
+  radial-gradient(ellipse 55% 60% at 74% 66%, color-mix(in srgb,var(--w) 75%,transparent), transparent 72%),
+  color-mix(in srgb,var(--w) 38%,transparent);
+  border-radius:var(--wob)}
+
+/* Masthead */
+.mast{padding-top:20px;display:flex;flex-direction:column;gap:2px}
+.mast .line1{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.script{font-family:var(--f-script);font-weight:500;font-size:26px;color:var(--ink-soft);line-height:1}
+.big{font-family:var(--f-letter);font-size:clamp(54px,16vw,84px);line-height:.92;letter-spacing:.02em;color:var(--k)}
+.big .l{display:inline-block}
+.count{font-family:var(--f-script);font-size:22px;color:var(--ink-soft);text-align:right;line-height:1;white-space:nowrap}
+.count b{font-family:var(--f-letter);font-size:40px;color:var(--ink);display:block}
+.sub{font-family:var(--f-letter);font-size:22px;letter-spacing:.08em;color:var(--ink)}
+.squiggle{display:block;width:100%;height:12px;margin-top:6px}
+.squiggle path{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+
+/* Sticky filter bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:10px 10px;display:flex;flex-direction:column;gap:10px;
+  margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));
+  box-shadow:0 10px 10px -10px rgba(43,39,35,.18)}
+.months{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:2px}
+.mbtn{border:0;padding:6px 0 4px;font-family:var(--f-letter);font-size:23px;line-height:1;color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;min-width:0;position:relative;border-radius:var(--wob)}
+.mbtn small{font-family:var(--f-hand);font-size:10px;letter-spacing:.02em;opacity:.85;margin-top:2px}
+.mbtn.now::after{content:"";position:absolute;inset:0 1px;border:1.6px solid var(--ink);border-radius:var(--wob2);transform:rotate(-4deg);pointer-events:none}
+.mbtn[aria-pressed="true"]{color:var(--ink)}
+.mbtn[aria-pressed="true"]{background:
+  radial-gradient(ellipse 70% 70% at 35% 40%, color-mix(in srgb,var(--w) 70%,transparent), transparent 75%),
+  color-mix(in srgb,var(--w) 45%,transparent)}
+.mbtn.all{font-size:19px}
+
+.tools{display:flex;gap:10px;align-items:flex-end}
+.search{flex:1;min-width:0;position:relative;display:flex;align-items:center;gap:8px;border-bottom:1.6px solid var(--ink);padding-bottom:2px}
+.search svg{width:20px;height:20px;flex:none;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round}
+.search input{flex:1;min-width:0;border:0;background:transparent;padding:6px 0;font-size:18px;outline:none}
+.search input::placeholder{color:var(--ink-soft)}
+.search:focus-within{border-bottom-style:dashed}
+.toggle{border:1.6px solid var(--ink);border-radius:var(--wob);padding:6px 10px;font-size:15px;white-space:nowrap;color:var(--ink-soft)}
+.toggle[aria-pressed="true"]{color:var(--ink);border-style:solid;background:color-mix(in srgb,#E3B24C 35%,transparent)}
+.toggle[aria-pressed="false"]{border-style:dashed}
+
+.cats{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-inline:-4px;padding:2px 4px 4px}
+.cats::-webkit-scrollbar{display:none}
+.chip{border:1.5px solid var(--ink);border-radius:var(--wob);padding:4px 12px 4px 8px;font-size:16px;white-space:nowrap;display:inline-flex;gap:5px;align-items:center;color:var(--ink)}
+.chip .ico{width:22px;height:22px}
+.chip .n{font-family:var(--f-script);font-size:17px;color:var(--ink-soft)}
+.chip[aria-pressed="true"]{border-color:transparent;background:
+  radial-gradient(ellipse 60% 70% at 30% 40%, color-mix(in srgb,var(--w) 70%,transparent), transparent 75%),
+  color-mix(in srgb,var(--w) 50%,transparent)}
+.chip[aria-pressed="true"] .n{color:var(--ink)}
+.cats .chip:nth-child(even){border-radius:var(--wob2)}
+
+/* Icons: ink line drawing over a wash dab */
+.ico{display:inline-block;position:relative;flex:none}
+.ico svg{width:100%;height:100%;overflow:visible}
+.ico .dab{fill:var(--w);opacity:.55}
+.ico .ln{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* List */
+.group{margin-top:26px}
+.group h2{display:flex;align-items:center;gap:10px;font-family:var(--f-letter);font-size:34px;letter-spacing:.03em;color:var(--k);line-height:1;padding:0 2px}
+.group h2 .ico{width:40px;height:40px}
+.group h2 .n{margin-left:auto;font-family:var(--f-script);font-size:20px;color:var(--ink-soft);letter-spacing:0}
+.group .squiggle{margin:4px 0 2px}
+.list{list-style:none;margin:0;padding:0}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;padding:10px 2px 12px;border-bottom:1px dashed var(--rule);cursor:pointer;user-select:none}
+.item:last-child{border-bottom:0}
+.item .name{font-size:20px;line-height:1.15;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px;row-gap:0}
+.note{font-family:var(--f-script);font-weight:700;font-size:18px;color:var(--k);white-space:nowrap}
+.note.last{color:#B23F48}
+.note.new{color:#946C12}
+.note.dim{color:var(--ink-soft);font-weight:500}
+.bar{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:9px;max-width:250px;position:relative}
+.bar i{height:9px;border-radius:var(--wob);border:1px dotted color-mix(in srgb,var(--ink) 30%,transparent);position:relative}
+.bar i:nth-child(odd){border-radius:var(--wob2)}
+.bar i.on{border-color:transparent;background:color-mix(in srgb,var(--w) 55%,transparent)}
+.bar i.pk{border-color:transparent;background:radial-gradient(ellipse 70% 80% at 40% 45%, var(--w), color-mix(in srgb,var(--w) 75%,transparent))}
+.bar i.cur::before{content:"";position:absolute;left:50%;top:-8px;transform:translateX(-50%);border:4px solid transparent;border-top:6px solid var(--ink);border-bottom:0}
+.add{width:44px;height:44px;border:1.6px solid var(--ink);border-radius:var(--wob);display:grid;place-items:center;position:relative}
+.item:nth-child(even) .add{border-radius:var(--wob2)}
+.add svg{width:20px;height:20px;stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.item.sel .add{border-color:var(--ink);background:
+  radial-gradient(ellipse 65% 70% at 35% 40%, var(--w), transparent 80%),
+  color-mix(in srgb,var(--w) 60%,transparent)}
+.item.sel .name{color:var(--k)}
+.empty{padding:40px 8px;text-align:center;color:var(--ink-soft);font-size:19px}
+
+.key{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+.key h3{font-family:var(--f-letter);font-size:26px;letter-spacing:.04em}
+.key-row{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:16px;color:var(--ink-soft);align-items:center}
+.key-row span{display:inline-flex;align-items:center;gap:6px}
+.key-row i{width:18px;height:9px;display:inline-block;border-radius:var(--wob)}
+.hint{font-size:16px;color:var(--ink-soft);margin:0;max-width:62ch}
+
+/* Surprise + soon */
+.mast-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px}
+.surprise{border:1.6px solid var(--ink);border-radius:var(--wob2);padding:4px 14px 4px 10px;font-family:var(--f-letter);font-size:24px;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;color:var(--ink);background:
+  radial-gradient(ellipse 60% 70% at 30% 40%, color-mix(in srgb,#E3B24C 70%,transparent), transparent 75%),
+  radial-gradient(ellipse 50% 60% at 78% 62%, color-mix(in srgb,#EE8F8A 60%,transparent), transparent 75%),
+  color-mix(in srgb,#E3B24C 30%,transparent)}
+.surprise svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.surprise-note{font-family:var(--f-script);font-size:18px;color:var(--ink-soft);line-height:1.1;text-align:right}
+.soon{margin-top:20px;display:flex;flex-direction:column;gap:16px}
+.soon-row{display:flex;flex-direction:column;gap:6px}
+.soon-row h3{font-family:var(--f-letter);font-size:28px;letter-spacing:.03em;line-height:1;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.soon-row h3 .script{font-size:19px}
+.soon-row.going h3{color:#B23F48}
+.soon-row.coming h3{color:#946C12}
+.soon-scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 4px;margin-inline:-2px}
+.soon-scroll::-webkit-scrollbar{display:none}
+.soon-scroll .chip{padding:4px 10px 4px 6px}
+.soon-scroll .chip .ico{width:22px;height:22px}
+.soon-scroll .chip .plus{font-family:var(--f-letter);font-size:20px;line-height:1;margin-left:2px;color:var(--ink-soft)}
+.soon-scroll .chip[aria-pressed="true"] .plus{color:var(--ink)}
+.toast button{border:0;margin-left:10px;color:var(--paper);text-decoration:underline;font-size:18px;padding:0}
+
+/* Dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);padding-bottom:env(safe-area-inset-bottom,0px)}
+.dock::before{content:"";position:absolute;left:0;right:0;top:-8px;height:10px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' preserveAspectRatio='none'%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6 V10 H0Z' fill='%23FDFCF8'/%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6' fill='none' stroke='%232B2723' stroke-width='1.4'/%3E%3C/svg%3E") repeat-x;background-size:120px 10px}
+.dock-in{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.tray{display:flex;align-items:center;gap:8px;padding-block:8px 0;min-height:44px}
+.tray-label{font-family:var(--f-script);font-size:20px;color:var(--ink-soft);white-space:nowrap}
+.tray-scroll{display:flex;gap:6px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none;padding:2px}
+.tray-scroll::-webkit-scrollbar{display:none}
+.pill{border:0;border-radius:var(--wob);padding:4px 8px 4px 12px;font-size:16px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;color:var(--ink);background:
+  radial-gradient(ellipse 60% 70% at 30% 40%, color-mix(in srgb,var(--w) 60%,transparent), transparent 75%),
+  color-mix(in srgb,var(--w) 40%,transparent)}
+.pill:nth-child(even){border-radius:var(--wob2)}
+.pill svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.2;fill:none;opacity:.6}
+.tray-empty{font-family:var(--f-script);font-size:20px;color:var(--ink-soft)}
+.linkbtn{border:0;color:var(--ink-soft);font-size:16px;text-decoration:underline wavy;text-underline-offset:4px;padding:6px 2px;white-space:nowrap}
+.nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-block:8px 10px;height:var(--nav-h)}
+.tab{white-space:nowrap;border:1.6px solid var(--ink);border-radius:var(--wob);font-family:var(--f-letter);font-size:25px;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink)}
+.tab+.tab{border-radius:var(--wob2)}
+.tab[aria-current="page"]{background:var(--ink);color:var(--paper)}
+.tab .ct{font-family:var(--f-hand);font-size:15px;letter-spacing:0;background:#F28C5B;color:var(--ink);border-radius:var(--wob2);padding:0 8px;min-width:24px;line-height:1.5}
+
+/* Prompt view */
+.pv{display:flex;flex-direction:column;gap:8px;padding-top:20px}
+.pv-head .big{font-size:clamp(46px,13vw,72px)}
+.pv-head p{color:var(--ink-soft);margin:8px 0 0;max-width:56ch;font-size:18px}
+.step{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px 10px;padding-top:22px}
+.step .num{font-family:var(--f-letter);font-size:64px;line-height:.8;color:var(--k);text-align:center}
+.step h3{font-family:var(--f-letter);font-size:32px;letter-spacing:.04em;line-height:1;align-self:end}
+.step .body{grid-column:1/-1;display:flex;flex-direction:column;gap:16px;padding-top:8px}
+.field{display:flex;flex-direction:column;gap:6px}
+.lbl{font-family:var(--f-script);font-weight:700;font-size:21px;color:var(--ink-soft);line-height:1}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opts .chip{padding:4px 12px}
+.opts .chip:nth-child(3n){border-radius:var(--wob2)}
+.stepper{display:inline-flex;align-items:center;gap:6px}
+.stepper button{border:1.6px solid var(--ink);border-radius:var(--wob);width:44px;height:44px;font-size:24px;line-height:1}
+.stepper button+output+button{border-radius:var(--wob2)}
+.stepper output{min-width:52px;text-align:center;font-family:var(--f-letter);font-size:38px;line-height:1}
+textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);background:transparent;padding:10px 12px;font-size:17px;min-height:84px;resize:vertical;
+  background-image:repeating-linear-gradient(transparent 0 27px, var(--rule) 27px 28px);background-position:0 9px;line-height:28px}
+.selist{display:flex;flex-wrap:wrap;gap:6px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:18px;cursor:pointer}
+.switch input{appearance:none;width:28px;height:28px;border:1.6px solid var(--ink);border-radius:var(--wob);flex:none;cursor:pointer;position:relative;margin:0;background:transparent}
+.switch input:checked{background:color-mix(in srgb,#8DBF5A 55%,transparent)}
+.switch input:checked::after{content:"";position:absolute;left:6px;top:1px;width:9px;height:16px;border:solid var(--ink);border-width:0 2.4px 2.4px 0;transform:rotate(40deg)}
+.out pre{margin:0;white-space:pre-wrap;word-wrap:break-word;font-family:var(--f-mono);font-size:12.5px;line-height:1.6;background:var(--paper-2);border:1.6px solid var(--ink);border-radius:var(--wob2);padding:16px;max-height:52vh;overflow:auto;user-select:text}
+.copy{border:0;border-radius:var(--wob);padding:12px 18px;font-family:var(--f-letter);font-size:34px;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;color:var(--ink);
+  background:radial-gradient(ellipse 55% 70% at 30% 40%, #F28C5B, transparent 75%),radial-gradient(ellipse 50% 60% at 75% 60%, color-mix(in srgb,#E3B24C 85%,transparent), transparent 75%),color-mix(in srgb,#F28C5B 55%,transparent)}
+.copy svg{width:24px;height:24px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round}
+.copy-note{font-family:var(--f-script);font-size:20px;color:var(--ink-soft);display:flex;gap:6px;align-items:center}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) rotate(-2deg) translateY(10px);background:var(--ink);color:var(--paper);padding:8px 18px;border-radius:var(--wob);font-size:18px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) rotate(-2deg) translateY(0)}
+.nosel{text-align:center;padding:36px 12px;color:var(--ink-soft);font-size:19px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.primary{border:1.6px solid var(--ink);border-radius:var(--wob);padding:8px 18px;font-family:var(--f-letter);font-size:26px;letter-spacing:.04em;color:var(--ink);background:color-mix(in srgb,#8DBF5A 45%,transparent)}
+@media (min-width:640px){.mbtn small{font-size:11px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <section id="v-pick">
+    <div class="mast" id="mast">
+      <div class="line1">
+        <span class="script" id="eyebrow">what's good in</span>
+        <div class="count"><b id="countN">0</b>to cook with</div>
+      </div>
+      <h1 class="big" id="headline">November</h1>
+      <div class="sub">Seasonal UK produce, fish &amp; game</div>
+      <div class="mast-actions">
+        <button class="surprise" id="surpriseBtn"><svg viewBox="0 0 24 24"><path d="M12 3.2c.5 3.3 1.8 5.6 5.4 6.3-3.5.8-4.8 3.1-5.3 6.6-.6-3.5-2-5.8-5.5-6.6 3.6-.7 4.9-3 5.4-6.3z"/><path d="M18.6 15.2c.2 1.4.8 2.3 2.2 2.6-1.4.3-2 1.2-2.2 2.6-.3-1.4-.9-2.3-2.3-2.6 1.4-.3 2-1.2 2.3-2.6z"/></svg>Surprise me</button>
+        <span class="surprise-note">a balanced basket<br>of what's best now</span>
+      </div>
+      <svg class="squiggle" viewBox="0 0 400 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 40 3, 70 10, 110 6 S 190 3, 230 7 S 320 10, 398 5"/></svg>
+    </div>
+    <header class="top">
+      <div class="months" id="months" role="group" aria-label="Month"></div>
+      <div class="tools">
+        <label class="search"><svg viewBox="0 0 24 24"><path d="M10.5 4.2c3.6-.3 6.4 2.4 6.3 5.9-.1 3.4-2.8 6.1-6.2 6.1-3.5 0-6.2-2.7-6.2-6 .1-3.3 2.6-5.8 6.1-6z"/><path d="m15.4 15.2 4.9 5.1"/></svg>
+          <input id="q" type="search" placeholder="search for an ingredient…" autocomplete="off" aria-label="Search ingredients"></label>
+        <button class="toggle" id="yearToggle" aria-pressed="false" title="Include ingredients available all year">+ all-year</button>
+      </div>
+      <div class="cats" id="cats" role="group" aria-label="Category"></div>
+    </header>
+    <div id="soon" class="soon"></div>
+    <div id="list"></div>
+    <div class="key">
+      <h3>How to read it</h3>
+      <div class="key-row c-veg">
+        <span><i style="background:var(--w)"></i>at its best</span>
+        <span><i style="background:color-mix(in srgb,var(--w) 55%,transparent)"></i>in season</span>
+        <span><i style="border:1px dotted var(--ink-soft)"></i>out of season</span>
+        <span><span class="note new">just in!</span> first month</span>
+        <span><span class="note last">last chance</span> final month</span>
+      </div>
+      <p class="hint">Seasons are typical for UK-grown, UK-landed or UK-shot produce and shift a few weeks with weather and region. Game follows the legal shooting seasons. A few imported citrus fruits are included because they have a short, well-known season in UK shops.</p>
+    </div>
+  </section>
+
+  <section id="v-prompt" hidden>
+    <div class="pv">
+      <div class="pv-head">
+        <span class="script">from basket to</span>
+        <h1 class="big c-fruit">Recipes</h1>
+        <p>Set a few preferences, then copy the prompt into ChatGPT, Claude, Gemini or any AI tool.</p>
+        <svg class="squiggle" viewBox="0 0 400 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 6 C 50 9, 90 3, 140 6 S 240 10, 290 5 S 360 4, 398 7"/></svg>
+      </div>
+      <div id="pvBody"></div>
+    </div>
+  </section>
+</div>
+
+<div class="dock">
+  <div class="dock-in">
+    <div class="tray" id="tray"></div>
+    <nav class="nav">
+      <button class="tab" id="tabPick" data-view="pick">Ingredients</button>
+      <button class="tab" id="tabPrompt" data-view="prompt">Recipe prompt <span class="ct" id="navCt">0</span></button>
+    </nav>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const M3=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const CATS=[["veg","Vegetables"],["fruit","Fruit"],["herb","Herbs"],["wild","Wild & foraged"],["fungi","Mushrooms"],["fish","Fish"],["shell","Shellfish"],["meat","Meat & game"],["nut","Nuts"]];
+const CATNAME=Object.fromEntries(CATS);
+/* season colour for the month headline */
+const SEASON_CLASS=m=>!m?"c-any":[12,1,2].includes(m)?"c-fish":m<=5?"c-veg":m<=8?"c-fruit":"c-shell";
+
+/* Hand-drawn icons: a wash dab + ink lines (24x24) */
+const DAB='<path class="dab" d="M5 9c1-4 6-6 10-5 4 1 6 4 5 8-1 5-5 8-10 7-4-1-6-5-5-10z"/>';
+const ICONS={
+ veg:DAB+'<path class="ln" d="M7 19.5c.3-1.6 6.6-9.8 8.6-11.3 1.2-.9 2.6.3 1.8 1.7-1.3 2.2-8.5 9.2-10.1 9.9-.3.1-.4-.1-.3-.3z"/><path class="ln" d="M10 15.2l1.3 1M12.6 12.4l1.2 1.1"/><path class="ln" d="M17 7.6c.2-1.9 1.2-3.4 2.7-4M17.6 8c1.4-.9 3-1.1 4.4-.6M16.7 7.4c-.6-1.4-.6-2.8 0-4"/>',
+ fruit:DAB+'<path class="ln" d="M12 8.2c-2.2-1.5-6.3-1-6.8 3.2-.5 4 2.3 8.6 5 8.3 1-.1 1.2-.6 1.9-.6.8 0 1 .6 2 .6 2.6 0 5.3-4.6 4.5-8.4-.8-3.8-4.4-4.2-6.6-3.1z"/><path class="ln" d="M12 8.2c0-1.6.4-3 1.3-4.1"/><path class="ln" d="M13.2 5.6c1.6-1.4 3.6-1.5 4.8-.9-1 1.5-3 2-4.8.9z"/>',
+ herb:DAB+'<path class="ln" d="M7 20.5c2.5-4.5 5.2-9.6 10.5-16"/><path class="ln" d="M9.5 15.5c-2.6-.2-4.1-1.8-4.4-3.7 2.2-.1 4 .9 4.4 3.7zM11.6 11.7c-1.9-1.6-2.3-3.7-1.6-5.4 1.9 1 2.5 3 1.6 5.4zM12.4 12.6c2.3-1 4.4-.6 5.6.8-1.9 1.2-4 .9-5.6-.8zM14.6 8.6c.3-2.4 1.9-3.8 3.9-4.1-.1 2.1-1.3 3.6-3.9 4.1z"/>',
+ wild:DAB+'<path class="ln" d="M12 20.5c0-3.5-.2-6.4.2-9.3"/><circle class="ln" cx="12.2" cy="8.4" r="1.6"/><path class="ln" d="M12.2 6.8c-.6-2-.1-3.3.9-3.8.7 1.3.4 2.6-.9 3.8zM13.8 8.2c1.7-1.1 3.1-1 3.8-.1-1.2.9-2.5 1-3.8.1zM13.2 9.9c1.2 1.6 1.2 3 .4 3.7-1-1-1.2-2.3-.4-3.7zM11.1 9.8c-1.6 1.1-3 1-3.7.2 1.1-.9 2.4-1 3.7-.2zM10.6 7.8c-1.9-.6-2.7-1.8-2.5-2.9 1.4.1 2.3 1.1 2.5 2.9z"/><path class="ln" d="M12.1 16.4c-1.6-1.7-3.6-2-5-1.4 1.3 1.6 3.2 2 5 1.4z"/>',
+ fungi:DAB+'<path class="ln" d="M4.2 11.6C4.8 7.4 8.4 5 12.3 5.1c4 .1 7.3 2.8 7.6 6.6-2.5.9-5.3 1.1-7.9 1-2.7 0-5.4-.3-7.8-1.1z"/><path class="ln" d="M10 12.9c-.2 2.4-.6 5-1 7.3 1.9.4 3.9.4 5.8 0-.3-2.3-.6-4.8-.7-7.3"/><path class="ln" d="M8.3 8.3l.6.3M14.7 7.4l.5.4M11.8 6.9l.2.2"/>',
+ fish:DAB+'<path class="ln" d="M3.6 12.2c2.6-3.6 6.4-5 10.1-4.4 2.3.4 3.7 2 4.6 3.4 1-1.3 2.3-2.4 3.6-2.9-.4 1.9-.4 3.9.1 5.8-1.4-.5-2.7-1.6-3.6-2.8-1 1.6-2.5 3.1-4.8 3.5-3.7.5-7.4-.9-10-2.6z"/><circle class="ln" cx="7.2" cy="11.4" r=".6"/><path class="ln" d="M9.8 9.4c.7 1.4.7 3.2 0 4.6"/>',
+ shell:DAB+'<path class="ln" d="M12 19.6c-3-.1-6.9-2.4-7.8-7C3.6 9 7 5.2 12 5.1c5-.1 8.4 3.8 7.8 7.4-.8 4.7-4.8 7.2-7.8 7.1z"/><path class="ln" d="M12 19.5V5.4M12 19.5 7 6.6M12 19.5 4.6 10M12 19.5l5-12.9M12 19.5 19.4 10"/><path class="ln" d="M9.8 19.2l-.4 1.5h5.2l-.4-1.5"/>',
+ meat:DAB+'<path class="ln" d="M5.2 19.3C6 14.8 9 7.6 13.8 4.6c1.6-1 3.1.4 2.4 2.1C14.2 11.6 9 17 5.2 19.3z"/><path class="ln" d="M5.2 19.3c3.7-4.6 6.8-9.1 9.4-13.5M9.4 13.4l-2.7-.6M11.6 10.4 9 9.4M8 15.6l-2.5.2M12.9 12.2l2.2-.3M10.8 15l2.3.2"/>',
+ nut:DAB+'<path class="ln" d="M6.6 11.4c-.2 4.2 2.4 8 5.4 8.4 3.1-.4 5.6-4.1 5.4-8.4"/><path class="ln" d="M5.4 11.5c.2-3 3-4.8 6.6-4.8 3.6 0 6.4 1.8 6.6 4.8-4.4.7-8.8.7-13.2 0z"/><path class="ln" d="M12 6.7c0-1.2.3-2.3 1-3.2M7.8 9.4l1 .2M11 8.6l.9.2M14.2 9.2l.9.2"/>'
+};
+const ico=(k,cls)=>`<span class="ico${cls?" "+cls:""}" aria-hidden="true"><svg viewBox="0 0 24 24">${ICONS[k]||""}</svg></span>`;
+
+/* name | category | season months | peak months | flags (y = all year, i = imported) */
+const RAW=`Asparagus|veg|4-6|5
+Globe artichokes|veg|6-11|7-9
+Aubergines|veg|7-10|8-9
+Beetroot|veg|6-1|7-10
+Broad beans|veg|6-9|6-7
+Broccoli (calabrese)|veg|6-10|7-9
+Purple sprouting broccoli|veg|1-4|2-3
+Brussels sprouts|veg|10-2|11-12
+Brussels tops|veg|11-2
+Butternut squash|veg|9-1|10-11
+Crown Prince squash|veg|10-2|10-12
+Pumpkin|veg|9-11|10
+Savoy cabbage|veg|9-3|11-1
+Red cabbage|veg|8-3|10-12
+January King cabbage|veg|11-2|12-1
+Hispi (pointed) cabbage|veg|5-10
+Spring greens|veg|2-5|3-4
+Carrots|veg|6-3|8-11
+Cauliflower|veg|1-12|11-3|y
+Romanesco|veg|8-11
+Celeriac|veg|9-3|11-1
+Celery|veg|7-11
+Swiss chard|veg|6-11
+Rainbow chard|veg|6-11
+Chicory|veg|11-3
+Radicchio|veg|10-2
+Courgettes|veg|6-9|7-8
+Courgette flowers|veg|6-8
+Cucumber|veg|6-9
+Florence fennel|veg|6-10
+French beans|veg|6-9|7-8
+Runner beans|veg|7-10|8-9
+Borlotti beans|veg|8-10
+Wet garlic|veg|5-7
+Garlic|veg|7-2
+Jerusalem artichokes|veg|10-3|11-1
+Kale|veg|9-3|11-2
+Cavolo nero|veg|9-2|10-1
+Kalettes|veg|11-3
+Kohlrabi|veg|7-11
+Leeks|veg|9-4|11-2
+Lettuce|veg|5-10|6-8
+Lamb's lettuce|veg|10-4
+Mizuna & mustard greens|veg|9-4
+Rocket|veg|5-10
+Watercress|veg|4-11|5-6
+Pak choi|veg|5-10
+Mangetout|veg|6-9
+Sugar snap peas|veg|6-9
+Peas|veg|6-8|6-7
+Marrow|veg|7-10
+Onions|veg|7-3
+Red onions|veg|7-3
+Shallots|veg|7-2
+Spring onions|veg|3-9
+Parsnips|veg|10-3|12-1
+Peppers|veg|7-10
+Chillies|veg|7-10|8-9
+Jersey Royal potatoes|veg|4-7|5-6
+New potatoes|veg|5-8|6-7
+Maincrop potatoes|veg|9-3
+Radishes|veg|4-10|5-6
+Salsify|veg|10-1
+Samphire|veg|6-8|7
+Spinach|veg|3-10|4-6
+Swede|veg|10-3|11-1
+Sweetcorn|veg|8-10|8-9
+Tomatoes|veg|6-10|7-9
+Heritage tomatoes|veg|7-9
+Turnips|veg|6-3
+Bramley apples|fruit|1-12|10-12|y
+Eating apples|fruit|8-5|9-11
+Pears|fruit|8-5|9-11
+Quince|fruit|10-12|10-11
+Medlars|fruit|10-12|11
+Plums|fruit|7-10|8-9
+Damsons|fruit|8-10|9
+Greengages|fruit|8-9|8
+Cherries|fruit|6-8|7
+Strawberries|fruit|5-9|6-7
+Raspberries|fruit|6-10|7-8
+Blackberries|fruit|7-10|8-9
+Blackcurrants|fruit|7-8
+Redcurrants|fruit|7-8
+Whitecurrants|fruit|7-8
+Gooseberries|fruit|6-8|6-7
+Blueberries|fruit|7-9|8
+Tayberries & loganberries|fruit|7-8
+Mulberries|fruit|8-9
+Figs|fruit|8-9
+Apricots|fruit|7-8
+Peaches|fruit|7-9|8
+Melons|fruit|7-9
+English grapes|fruit|9-10
+Forced rhubarb|fruit|1-3|2
+Outdoor rhubarb|fruit|4-7|4-5
+Seville oranges|fruit|1-2|1|i
+Blood oranges|fruit|1-3|2|i
+Clementines|fruit|11-1|12|i
+Pomegranates|fruit|10-1|11-12|i
+Basil|herb|6-9|7-8
+Bay|herb|1-12||y
+Borage|herb|6-9
+Chervil|herb|4-10
+Chives|herb|3-9|5-6
+Coriander|herb|5-9
+Dill|herb|6-9
+Horseradish|herb|10-3
+Lemon verbena|herb|6-9
+Lovage|herb|4-9
+Marjoram & oregano|herb|6-9
+Mint|herb|4-9|6-8
+Nasturtiums|herb|6-10
+Parsley|herb|1-12||y
+Rosemary|herb|1-12||y
+Sage|herb|4-10
+Sorrel|herb|3-9|4-5
+Tarragon|herb|5-9
+Thyme|herb|1-12||y
+Wild garlic|wild|3-6|4
+Three-cornered leek|wild|2-5
+Nettles|wild|3-5|3-4
+Alexanders|wild|2-5
+Hop shoots|wild|4-5
+Dandelion leaves|wild|3-6
+Wood sorrel|wild|4-9
+Sea beet|wild|1-12|3-5|y
+Sea purslane|wild|5-10
+Elderflower|wild|5-6|6
+Elderberries|wild|8-10|9
+Bilberries|wild|7-9
+Wild strawberries|wild|6-8
+Sloes|wild|9-11|10
+Rosehips|wild|9-11
+Crab apples|wild|9-11
+Sea buckthorn|wild|9-11
+Chestnut mushrooms|fungi|1-12||y
+Oyster mushrooms|fungi|1-12||y
+Shiitake|fungi|1-12||y
+Morels|fungi|3-5|4
+St George's mushrooms|fungi|4-5
+Chicken of the woods|fungi|5-10
+Girolles (chanterelles)|fungi|7-11|8-10
+Ceps (porcini)|fungi|8-11|9-10
+Field mushrooms|fungi|6-10|9
+Hedgehog mushrooms|fungi|8-11
+Giant puffball|fungi|7-10
+Hen of the woods|fungi|9-11
+Trompettes (horn of plenty)|fungi|9-11
+Wood blewits|fungi|10-12
+English summer truffle|fungi|6-10
+Mackerel|fish|6-11|7-9
+Cornish sardines|fish|7-1|8-10
+Herring|fish|5-12
+Sprats|fish|10-3|11-1
+Cornish anchovies|fish|8-12
+Sea bass (line-caught)|fish|6-12|8-10
+Pollock|fish|6-1
+Hake|fish|6-2
+Cod|fish|5-1
+Haddock|fish|5-2
+Coley|fish|6-12
+Whiting|fish|6-2
+Ling|fish|6-1
+Plaice|fish|5-12|6-9
+Lemon sole|fish|8-3
+Dover sole|fish|5-2|6-10
+Megrim (Cornish sole)|fish|5-12
+Dab|fish|6-2
+Turbot|fish|8-3
+Brill|fish|6-3
+John Dory|fish|6-12|9-11
+Monkfish|fish|7-2
+Gurnard|fish|7-2|8-11
+Red mullet|fish|5-10|7-9
+Grey mullet|fish|6-12
+Black bream|fish|7-3
+Skate & ray|fish|5-2
+Wild brown trout|fish|3-9
+Sea trout|fish|3-8|5-7
+Rainbow trout|fish|1-12||y
+Pike|fish|7-2
+Mussels|shell|9-3|10-1
+Native oysters|shell|9-4|10-12
+Rock oysters|shell|1-12|9-4|y
+King scallops (hand-dived)|shell|10-4|11-2
+Queen scallops|shell|6-11
+Brown crab|shell|4-11|6-9
+Spider crab|shell|4-7|5-6
+Lobster|shell|4-11|6-9
+Langoustines|shell|5-11
+Clams|shell|9-4
+Cockles|shell|9-4
+Razor clams|shell|9-4
+Winkles|shell|10-4
+Brown shrimp|shell|6-10|8-9
+Squid|shell|9-1|10-12
+Cuttlefish|shell|3-6|4-5
+New-season lamb|meat|5-12|8-10
+Hogget|meat|1-5
+Mutton|meat|10-3
+Beef|meat|1-12||y
+Pork|meat|1-12||y
+Free-range chicken|meat|1-12||y
+Duck|meat|1-12||y
+Guinea fowl|meat|1-12||y
+Goose|meat|9-12|12
+Free-range turkey|meat|11-12|12
+Grouse|meat|8-12|8-10
+Snipe|meat|8-1
+Partridge|meat|9-2|10-12
+Pheasant|meat|10-1|11-12
+Woodcock|meat|10-1|11-12
+Mallard|meat|9-1
+Teal|meat|9-1
+Wild venison|meat|8-3|10-1
+Hare|meat|8-2|10-12
+Wild rabbit|meat|1-12|9-2|y
+Wood pigeon|meat|1-12|5-10|y
+Kentish cobnuts|nut|8-10|9
+Hazelnuts|nut|9-10
+Wet walnuts|nut|9-10
+Sweet chestnuts|nut|10-12|10-11`;
+
+function range(s){const out=new Set();if(!s)return out;s.split(",").forEach(p=>{const [a,b]=p.split("-").map(Number);if(!b){out.add(a);return}let m=a;for(let k=0;k<12;k++){out.add(m);if(m===b)break;m=m%12+1}});return out}
+const DATA=RAW.trim().split("\n").map((l,i)=>{const [name,cat,s,pk,fl]=l.split("|");const months=range(s);return{id:"i"+i+"-"+name.toLowerCase().replace(/[^a-z]+/g,"-"),name,cat,months,peak:range(pk),year:(fl||"").includes("y")||months.size===12,imp:(fl||"").includes("i"),start:+s.split("-")[0],end:+(s.split("-")[1]||s)}});
+const BYID=Object.fromEntries(DATA.map(d=>[d.id,d]));
+const BYNAME=Object.fromEntries(DATA.map(d=>[d.name,d]));
+
+/* storage */
+const KEY="seasonal-larder-v1";
+function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({sel:[...state.sel].map(id=>BYID[id]&&BYID[id].name).filter(Boolean),opts:state.opts,year:state.year}))}catch(e){}}
+
+const NOW=new Date().getMonth()+1;
+const saved=load()||{};
+const state={
+  month:NOW, cat:"all", q:"", year:!!saved.year,
+  sel:new Set((saved.sel||[]).map(n=>BYNAME[n]&&BYNAME[n].id).filter(Boolean)),
+  opts:Object.assign({servings:2,diet:"No restrictions",time:"Up to 45 min",meal:"Dinner",mood:[],skill:"Confident home cook",ideas:4,mode:"core",pantry:true,uk:true,extra:""},saved.opts||{})
+};
+if(!saved.sel){["Kale","Celeriac","Partridge","Bramley apples"].forEach(n=>BYNAME[n]&&state.sel.add(BYNAME[n].id))}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ICON_PLUS='<svg viewBox="0 0 24 24"><path d="M12.2 5.2c-.1 4.6-.3 9.1-.1 13.6M5.3 12.3c4.5-.3 9-.2 13.4 0"/></svg>';
+const ICON_TICK='<svg viewBox="0 0 24 24"><path d="M5 12.8c1.6 1.2 3 2.6 4.3 4.4 2.6-4 5.6-7.4 9.4-10.6"/></svg>';
+const ICON_X='<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+const squiggle=()=>{const y=()=>(4+Math.random()*4).toFixed(1);return `<svg class="squiggle" viewBox="0 0 400 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 ${y()} C 60 ${y()}, 100 ${y()}, 150 ${y()} S 260 ${y()}, 300 ${y()} S 370 ${y()}, 398 ${y()}"/></svg>`};
+
+/* month strip */
+function renderMonths(){
+  const el=$("#months");
+  el.innerHTML=M3.map((m,i)=>`<button class="mbtn ${SEASON_CLASS(i+1)}${i+1===NOW?" now":""}" data-m="${i+1}" aria-pressed="${state.month===i+1}" aria-label="${MONTHS[i]}${i+1===NOW?" (this month)":""}">${m[0]}<small>${m}</small></button>`).join("")+
+    `<button class="mbtn all c-nut" data-m="0" aria-pressed="${state.month===0}" aria-label="All months">All</button>`;
+}
+$("#months").addEventListener("click",e=>{const b=e.target.closest(".mbtn");if(!b)return;state.month=+b.dataset.m;renderMonths();renderList()});
+
+function visible(){
+  const q=state.q.trim().toLowerCase();
+  return DATA.filter(d=>{
+    if(state.month&&!d.months.has(state.month))return false;
+    if(state.month&&d.year&&!state.year&&!state.sel.has(d.id))return false;
+    if(q&&!d.name.toLowerCase().includes(q)&&!CATNAME[d.cat].toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+function renderCats(base){
+  const counts={};base.forEach(d=>counts[d.cat]=(counts[d.cat]||0)+1);
+  $("#cats").innerHTML=`<button class="chip c-nut" data-c="all" aria-pressed="${state.cat==="all"}">Everything <span class="n">${base.length}</span></button>`+
+    CATS.filter(([k])=>counts[k]).map(([k,l])=>`<button class="chip c-${k}" data-c="${k}" aria-pressed="${state.cat===k}">${ico(k)}${l} <span class="n">${counts[k]}</span></button>`).join("");
+}
+$("#cats").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;state.cat=b.dataset.c;renderList()});
+$("#q").addEventListener("input",e=>{state.q=e.target.value;renderList()});
+$("#yearToggle").addEventListener("click",()=>{state.year=!state.year;save();renderList()});
+
+function notes(d){
+  const m=state.month;let b="";
+  if(d.year)b+=`<span class="note dim">all year</span>`;
+  else if(m){
+    if(m===d.start&&d.months.size>1)b+=`<span class="note new">← just in!</span>`;
+    else if(m===d.end&&d.months.size>1)b+=`<span class="note last">← last chance</span>`;
+    else if(d.peak.has(m))b+=`<span class="note">← at its best</span>`;
+  }
+  if(d.imp)b+=`<span class="note dim">imported</span>`;
+  return b;
+}
+function bar(d){
+  let h='<div class="bar" aria-hidden="true">';
+  for(let m=1;m<=12;m++){h+=`<i class="${d.peak.has(m)?"pk":d.months.has(m)?"on":""}${m===(state.month||NOW)?" cur":""}"></i>`}
+  return h+"</div>";
+}
+function seasonText(d){if(d.year)return "available all year";const a=M3[d.start-1],b=M3[d.end-1];return a===b?a:`${a}–${b}`}
+
+function renderHead(){
+  const m=state.month,h=$("#headline");
+  h.className="big "+SEASON_CLASS(m);
+  const word=m?MONTHS[m-1]:"Any month";
+  h.innerHTML=[...word].map((c,i)=>`<span class="l" style="transform:translateY(${((i*37)%5-2)*0.6}px) rotate(${((i*53)%7-3)*0.7}deg)">${c===" "?"&nbsp;":esc(c)}</span>`).join("");
+  $("#eyebrow").textContent=m?(m===NOW?"what's good right now, in":"planning ahead for"):"the whole larder,";
+}
+function renderSoon(){
+  const m=state.month,el=$("#soon");
+  if(!m||state.q.trim()){el.innerHTML="";el.hidden=true;return}
+  const nx=m%12+1;
+  const inCat=d=>state.cat==="all"||d.cat===state.cat;
+  const going=DATA.filter(d=>!d.year&&d.end===m&&d.months.size>1&&inCat(d));
+  const coming=DATA.filter(d=>!d.year&&d.start===nx&&!d.months.has(m)&&inCat(d));
+  const chipsOf=list=>list.sort((a,b)=>a.name.localeCompare(b.name)).map(d=>{const on=state.sel.has(d.id);return `<button class="chip c-${d.cat}" data-soon="${d.id}" aria-pressed="${on}">${ico(d.cat)}${esc(d.name)}<span class="plus">${on?"✓":"+"}</span></button>`}).join("");
+  let h="";
+  if(going.length)h+=`<div class="soon-row going"><h3>Last chance <span class="script">finishing after ${MONTHS[m-1]}</span></h3><div class="soon-scroll">${chipsOf(going)}</div></div>`;
+  if(coming.length)h+=`<div class="soon-row coming"><h3>Coming soon <span class="script">arriving in ${MONTHS[nx-1]}</span></h3><div class="soon-scroll">${chipsOf(coming)}</div></div>`;
+  el.innerHTML=h;el.hidden=!h;
+}
+$("#soon").addEventListener("click",e=>{const b=e.target.closest("[data-soon]");if(b)toggle(b.dataset.soon)});
+
+/* surprise basket: 1 protein, 2 veg, 1 fruit/nut, 1 herb/wild/mushroom, weighted to peak */
+function surprise(){
+  const m=state.month||NOW;
+  const pool=DATA.filter(d=>d.months.has(m)&&!d.year&&!d.imp);
+  const picked=[];
+  const take=(cats,n)=>{let c=pool.filter(d=>cats.includes(d.cat)&&!picked.includes(d));
+    for(let k=0;k<n&&c.length;k++){const w=c.map(d=>d.peak.has(m)?3:1),t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t,i=0;while((r-=w[i])>0)i++;picked.push(c[i]);c.splice(i,1)}};
+  take(["fish","shell","meat"],1);take(["veg"],2);take(["fruit","nut"],1);take(["herb","wild","fungi"],1);
+  if(!picked.length){toast("Nothing in season to pick from");return}
+  const prev=new Set(state.sel);
+  state.sel=new Set(picked.map(d=>d.id));save();
+  state.cat="all";renderList();renderTray();if(view==="prompt")renderPrompt();
+  toast("Fresh basket for "+MONTHS[m-1],()=>{state.sel=prev;save();renderList();renderTray();if(view==="prompt")renderPrompt()});
+}
+$("#surpriseBtn").addEventListener("click",surprise);
+
+function renderList(){
+  const base=visible();
+  if(state.cat!=="all"&&!base.some(d=>d.cat===state.cat))state.cat="all";
+  renderCats(base);renderHead();renderSoon();
+  const items=state.cat==="all"?base:base.filter(d=>d.cat===state.cat);
+  const m=state.month;
+  $("#countN").textContent=items.length;
+  $("#yearToggle").setAttribute("aria-pressed",state.year);
+  $("#yearToggle").hidden=!m;
+  if(!items.length){$("#list").innerHTML=`<div class="empty">Nothing matches “${esc(state.q)}”${m?" in "+MONTHS[m-1]:""}.<br>Try another month, or tap <b>All</b>.</div>`;return}
+  let html="";
+  CATS.forEach(([k,l])=>{
+    const g=items.filter(d=>d.cat===k);if(!g.length)return;
+    g.sort((a,b)=>(a.year-b.year)||((m&&b.peak.has(m))-(m&&a.peak.has(m)))||a.name.localeCompare(b.name));
+    html+=`<section class="group c-${k}"><h2>${ico(k)}${esc(l)}<span class="n">${g.length} in season</span></h2>${squiggle()}<ul class="list">`+
+      g.map(d=>{const on=state.sel.has(d.id);return `<li class="item${on?" sel":""}" data-id="${d.id}" role="button" tabindex="0" aria-pressed="${on}" aria-label="${esc(d.name)}, ${seasonText(d)}">
+        <div style="min-width:0"><div class="name">${esc(d.name)}${notes(d)}</div>${bar(d)}</div>
+        <span class="add" aria-hidden="true">${on?ICON_TICK:ICON_PLUS}</span></li>`}).join("")+`</ul></section>`;
+  });
+  if(!m)html=html.replace(/ in season<\/span>/g,"</span>");
+  $("#list").innerHTML=html;
+}
+function toggle(id){
+  if(state.sel.has(id)){state.sel.delete(id)}else{state.sel.add(id)}
+  save();
+  const li=document.querySelector(`.item[data-id="${CSS.escape(id)}"]`);
+  if(li){const on=state.sel.has(id);li.classList.toggle("sel",on);li.setAttribute("aria-pressed",on);li.querySelector(".add").innerHTML=on?ICON_TICK:ICON_PLUS}
+  renderTray();renderSoon();
+  if(view==="prompt")renderPrompt();
+}
+$("#list").addEventListener("click",e=>{const li=e.target.closest(".item");if(li)toggle(li.dataset.id)});
+$("#list").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("item")){e.preventDefault();toggle(e.target.dataset.id)}});
+
+/* tray */
+let confirmClear=false;
+function selList(){return [...state.sel].map(id=>BYID[id]).filter(Boolean).sort((a,b)=>CATS.findIndex(c=>c[0]===a.cat)-CATS.findIndex(c=>c[0]===b.cat)||a.name.localeCompare(b.name))}
+const pill=(d,attr)=>`<button class="pill c-${d.cat}" ${attr}="${d.id}" aria-label="Remove ${esc(d.name)}">${esc(d.name)}${ICON_X}</button>`;
+function renderTray(){
+  const s=selList();
+  $("#navCt").textContent=s.length;
+  $("#tray").innerHTML=s.length?`<span class="tray-label">basket:</span><div class="tray-scroll">${s.map(d=>pill(d,"data-id")).join("")}</div><button class="linkbtn" id="clearBtn">${confirmClear?"sure?":"clear"}</button>`
+    :`<div class="tray-empty">tap an ingredient to start your basket…</div>`;
+}
+$("#tray").addEventListener("click",e=>{
+  const p=e.target.closest(".pill");if(p){toggle(p.dataset.id);return}
+  if(e.target.id==="clearBtn"){
+    if(!confirmClear){confirmClear=true;renderTray();setTimeout(()=>{confirmClear=false;renderTray()},3000);return}
+    confirmClear=false;state.sel.clear();save();renderList();renderTray();if(view==="prompt")renderPrompt();toast("Basket cleared");
+  }
+});
+
+/* prompt view */
+const DIETS=["No restrictions","Vegetarian","Vegan","Pescatarian","Gluten-free","Dairy-free","Low-carb"];
+const TIMES=["Under 20 min","Up to 30 min","Up to 45 min","Up to 1 hour","Slow weekend cook"];
+const MEALS=["Dinner","Lunch","Brunch","Starter","Side dish","Dessert","Batch cook","Dinner party"];
+const MOODS=["Comfort food","Light & fresh","British classic","Italian","French","Spanish","Middle Eastern","Indian","East Asian","Surprise me"];
+const SKILLS=["Keep it simple","Confident home cook","Show-off / ambitious"];
+const CHIPCOL={meal:"c-fruit",time:"c-fish",diet:"c-veg",mood:"c-meat",skill:"c-nut",ideas:"c-wild"};
+
+function chips(name,list,cur,multi){return `<div class="opts" data-opt="${name}"${multi?' data-multi="1"':""}>`+list.map(v=>`<button class="chip ${CHIPCOL[name]}" data-v="${esc(v)}" aria-pressed="${multi?cur.includes(v):cur===v}">${esc(v)}</button>`).join("")+"</div>"}
+
+function buildPrompt(){
+  const o=state.opts,s=selList(),mName=MONTHS[(state.month||NOW)-1];
+  const L=[];
+  L.push(`You are an experienced British home cook and recipe developer who cooks with the seasons. Suggest recipes for me based on the ingredients below.`);
+  L.push("");
+  L.push(`## My ingredients (in season in the UK in ${mName})`);
+  s.forEach(d=>{const notes=[];
+    if(!d.year){notes.push(`season ${seasonText(d)}`);const mo=state.month||NOW;if(d.peak.has(mo))notes.push("at its peak");if(mo===d.end&&d.months.size>1)notes.push("end of season")}
+    else notes.push("available all year");
+    if(d.imp)notes.push("imported");
+    L.push(`- ${d.name} (${notes.join(", ")})`)});
+  L.push("");
+  L.push("## What I'd like");
+  L.push(`- ${o.ideas} distinct recipe ideas that make the most of these ingredients while they're in season.`);
+  L.push(o.mode==="all"?`- Each recipe should use all of the ingredients above, if that makes sense; tell me if a combination doesn't work.`:`- Each recipe should feature at least two of my ingredients. It doesn't need to use all of them; spread them across the ideas so that together the recipes use everything.`);
+  L.push(`- Meal: ${o.meal}`);
+  L.push(`- Servings: ${o.servings}`);
+  L.push(`- Total time available: ${o.time}`);
+  if(o.diet!=="No restrictions")L.push(`- Dietary requirement: ${o.diet}. Every recipe must meet this strictly${/Vegetarian|Vegan|Pescatarian/.test(o.diet)?"; leave out any of my ingredients that don't fit and say so":""}.`);
+  if(o.mood.length)L.push(`- Cuisine / mood: ${o.mood.join(", ")}`);
+  L.push(`- Skill level: ${o.skill}`);
+  L.push(o.pantry?`- Assume a normal store cupboard (oils, butter, flour, stock, spices, onions, garlic, lemons, eggs, dairy). List anything else I'd need to buy.`:`- Keep extra ingredients to a minimum and list every additional item I'd need to buy.`);
+  if(o.extra.trim())L.push(`- Also: ${o.extra.trim()}`);
+  L.push("");
+  L.push("## Format for each recipe");
+  L.push("1. Name and a one-line description of why it suits the season");
+  L.push("2. Prep time, cook time and total time");
+  L.push("3. Ingredients list with quantities, grouped by component");
+  L.push("4. Step-by-step method with timings and visual cues for doneness");
+  L.push("5. Tips: how to prep the seasonal ingredients, what to swap if something's unavailable, and what can be made ahead");
+  L.push("6. What to serve it with, and a drink pairing");
+  L.push("");
+  L.push("## To finish");
+  L.push("- A short combined shopping list for anything not in my basket or store cupboard.");
+  L.push("- Your pick of the best recipe for this time of year, in one sentence.");
+  if(o.uk)L.push("- Use UK conventions: metric weights (g, ml), °C with fan-oven temperatures, and British ingredient names (courgette, aubergine, coriander, double cream).");
+  L.push("");
+  L.push("Start with a quick numbered overview of all the ideas, then give the full recipes.");
+  return L.join("\n");
+}
+
+function step(n,cls,title,body){return `<section class="step ${cls}"><div class="num">${n}</div><h3>${title}</h3><div class="body">${body}</div></section>`}
+function renderPrompt(){
+  const s=selList(),o=state.opts;
+  if(!s.length){$("#pvBody").innerHTML=`<div class="nosel">${ico("veg")}<div>Your basket's empty. Pick a few seasonal things first.</div><button class="primary" data-go="pick">Browse ingredients</button></div>`;return}
+  const active=document.activeElement&&document.activeElement.id;
+  $("#pvBody").innerHTML=
+  step(1,"c-veg",`Check the basket <span class="lbl">(${s.length})</span>`,`
+    <div class="selist">${s.map(d=>pill(d,"data-rm")).join("")}</div>
+    <label class="switch">Use every ingredient in each recipe<input type="checkbox" id="optAll" ${o.mode==="all"?"checked":""}></label>`)+
+  step(2,"c-fish","Set the scene",`
+    <div class="field"><span class="lbl">how many people?</span>
+      <div class="stepper"><button data-step="-1" aria-label="Fewer servings">−</button><output id="servOut">${o.servings}</output><button data-step="1" aria-label="More servings">+</button></div></div>
+    <div class="field"><span class="lbl">what for?</span>${chips("meal",MEALS,o.meal)}</div>
+    <div class="field"><span class="lbl">how much time?</span>${chips("time",TIMES,o.time)}</div>
+    <div class="field"><span class="lbl">any diet?</span>${chips("diet",DIETS,o.diet)}</div>
+    <div class="field"><span class="lbl">cuisine or mood (pick any)</span>${chips("mood",MOODS,o.mood,true)}</div>
+    <div class="field"><span class="lbl">how ambitious?</span>${chips("skill",SKILLS,o.skill)}</div>
+    <div class="field"><span class="lbl">how many ideas?</span>${chips("ideas",["3","4","5","6"],String(o.ideas))}</div>
+    <label class="switch">Assume a normal store cupboard<input type="checkbox" id="optPantry" ${o.pantry?"checked":""}></label>
+    <label class="switch">UK measurements &amp; names<input type="checkbox" id="optUk" ${o.uk?"checked":""}></label>
+    <div class="field"><label class="lbl" for="optExtra">anything else?</label>
+      <textarea id="optExtra" placeholder="e.g. one-pot only, no oven, kids eating, using up leftover roast chicken">${esc(o.extra)}</textarea></div>`)+
+  step(3,"c-fruit","Copy &amp; paste",`
+    <button class="copy" id="copyBtn"><svg viewBox="0 0 24 24"><path d="M9.2 9.1c3.6-.2 7.2-.2 10.8 0 .2 3.6.2 7.3 0 10.9-3.6.2-7.2.2-10.8 0-.2-3.6-.2-7.3 0-10.9z"/><path d="M5 15.2c-.2-3.4-.1-6.8.1-10.2 3.3-.2 6.7-.2 10.1 0"/></svg>Copy the prompt</button>
+    <div class="copy-note">↓ here's what you'll be pasting</div>
+    <div class="out"><pre id="promptOut" tabindex="0"></pre></div>`);
+  $("#promptOut").textContent=buildPrompt();
+  if(active==="optExtra"){const t=$("#optExtra");t.focus();t.setSelectionRange(t.value.length,t.value.length)}
+}
+$("#pvBody").addEventListener("click",e=>{
+  const o=state.opts;
+  const go=e.target.closest("[data-go]");if(go){setView(go.dataset.go);return}
+  const rm=e.target.closest("[data-rm]");if(rm){toggle(rm.dataset.rm);return}
+  const st=e.target.closest("[data-step]");if(st){o.servings=Math.min(20,Math.max(1,o.servings+ +st.dataset.step));save();$("#servOut").textContent=o.servings;$("#promptOut").textContent=buildPrompt();return}
+  const c=e.target.closest(".opts .chip");if(c){const g=c.parentElement,k=g.dataset.opt,v=c.dataset.v;
+    if(g.dataset.multi){const i=o[k].indexOf(v);i>-1?o[k].splice(i,1):o[k].push(v)}else{o[k]=k==="ideas"?+v:v}
+    g.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",g.dataset.multi?o[k].includes(b.dataset.v):String(o[k])===b.dataset.v));
+    save();$("#promptOut").textContent=buildPrompt();return}
+  if(e.target.closest("#copyBtn"))copyPrompt();
+});
+$("#pvBody").addEventListener("change",e=>{const o=state.opts;
+  if(e.target.id==="optAll")o.mode=e.target.checked?"all":"core";
+  if(e.target.id==="optPantry")o.pantry=e.target.checked;
+  if(e.target.id==="optUk")o.uk=e.target.checked;
+  save();$("#promptOut").textContent=buildPrompt()});
+$("#pvBody").addEventListener("input",e=>{if(e.target.id==="optExtra"){state.opts.extra=e.target.value;save();$("#promptOut").textContent=buildPrompt()}});
+
+function copyPrompt(){
+  const text=buildPrompt();
+  const fallback=()=>{const pre=$("#promptOut");const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);let ok=false;try{ok=document.execCommand("copy")}catch(e){}toast(ok?"Copied! Off you go.":"Selected. Use your phone's Copy.")};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>toast("Copied! Off you go."),fallback)}else fallback()}catch(e){fallback()}
+}
+let tt;function toast(m,undo){const t=$("#toast");t.textContent=m;t.style.pointerEvents=undo?"auto":"none";
+  if(undo){const b=document.createElement("button");b.textContent="Undo";b.onclick=()=>{undo();t.classList.remove("show");t.style.pointerEvents="none"};t.appendChild(b)}
+  t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>{t.classList.remove("show");t.style.pointerEvents="none"},undo?5000:2000)}
+
+/* views */
+let view="pick";
+function setView(v,fromHash){
+  view=v==="prompt"?"prompt":"pick";
+  $("#v-pick").hidden=view!=="pick";$("#v-prompt").hidden=view!=="prompt";
+  $("#tabPick").setAttribute("aria-current",view==="pick"?"page":"false");
+  $("#tabPrompt").setAttribute("aria-current",view==="prompt"?"page":"false");
+  if(view==="prompt")renderPrompt();
+  if(!fromHash){try{history.replaceState(null,"","#"+view)}catch(e){location.hash=view}}
+  window.scrollTo(0,0);
+}
+document.querySelector(".nav").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b)setView(b.dataset.view)});
+window.addEventListener("hashchange",()=>setView(location.hash.slice(1),true));
+
+renderMonths();renderList();renderTray();
+setView(location.hash.slice(1)||"pick",true);
+})();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+</script>
+
+</body>
+</html>

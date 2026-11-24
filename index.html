@@ -11,6 +11,8 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Larder">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
 <meta property="og:title" content="Seasonal Larder">
 <meta property="og:description" content="What's in season in the UK right now, and a one-tap AI recipe prompt for it.">
@@ -162,7 +164,19 @@ h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
   radial-gradient(ellipse 50% 60% at 78% 62%, color-mix(in srgb,#EE8F8A 60%,transparent), transparent 75%),
   color-mix(in srgb,#E3B24C 30%,transparent)}
 .surprise svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.surprise-note{font-family:var(--f-script);font-size:18px;color:var(--ink-soft);line-height:1.1;text-align:right}
+.pic-link{border:0;padding:4px 0;font-family:var(--f-script);font-weight:700;font-size:19px;color:var(--ink-soft);line-height:1.1;text-align:right;text-decoration:underline wavy;text-decoration-thickness:1px;text-underline-offset:4px}
+.pairbar{margin-top:18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border:1.6px solid var(--ink);border-radius:var(--wob2);background:
+  radial-gradient(ellipse 60% 80% at 20% 50%, color-mix(in srgb,var(--w) 40%,transparent), transparent 75%),color-mix(in srgb,var(--w) 14%,transparent)}
+.pairbar .script{font-size:22px;color:var(--ink)}
+.pairbar .chip{padding:4px 12px 4px 6px;font-size:18px}
+.pairbar .chip .ico{width:26px;height:26px}
+.pairbar .clear{margin-left:auto;border:0;font-size:16px;color:var(--ink-soft);text-decoration:underline wavy;text-underline-offset:4px;padding:6px 2px}
+.pairbar p{flex-basis:100%;margin:0;font-size:15px;color:var(--ink-soft)}
+.findpairs{align-self:flex-start;border:1.5px solid var(--ink);border-radius:var(--wob2);padding:6px 14px;font-size:17px;color:var(--ink);margin-top:8px}
+.pic-wrap{display:flex;flex-direction:column;gap:12px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.pic-wrap img{width:100%;height:auto;border:1.5px solid var(--ink);border-radius:var(--wob2);box-shadow:0 6px 18px rgba(43,39,35,.15);background:var(--paper-2);aspect-ratio:4/5}
+.pic-actions{display:flex;gap:8px;flex-wrap:wrap}
+.pic-actions > *{flex:1 1 140px;text-align:center;text-decoration:none}
 .soon{margin-top:20px;display:flex;flex-direction:column;gap:16px}
 .soon-row{display:flex;flex-direction:column;gap:6px}
 .soon-row h3{font-family:var(--f-letter);font-size:28px;letter-spacing:.03em;line-height:1;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -296,7 +310,7 @@ textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);backg
       <div class="sub">Seasonal UK produce, fish &amp; game</div>
       <div class="mast-actions">
         <button class="surprise" id="surpriseBtn"><svg viewBox="0 0 24 24"><path d="M12 3.2c.5 3.3 1.8 5.6 5.4 6.3-3.5.8-4.8 3.1-5.3 6.6-.6-3.5-2-5.8-5.5-6.6 3.6-.7 4.9-3 5.4-6.3z"/><path d="M18.6 15.2c.2 1.4.8 2.3 2.2 2.6-1.4.3-2 1.2-2.2 2.6-.3-1.4-.9-2.3-2.3-2.6 1.4-.3 2-1.2 2.3-2.6z"/></svg>Surprise me</button>
-        <span class="surprise-note">a balanced basket<br>of what's best now</span>
+        <button class="pic-link" id="picBtn">share this month<br>as a picture →</button>
       </div>
       <svg class="squiggle" viewBox="0 0 400 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 40 3, 70 10, 110 6 S 190 3, 230 7 S 320 10, 398 5"/></svg>
     </div>
@@ -309,6 +323,7 @@ textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);backg
       </div>
       <div class="cats" id="cats" role="group" aria-label="Category"></div>
     </header>
+    <div id="pairBar" hidden></div>
     <div id="soon" class="soon"></div>
     <div id="list"></div>
     <div class="key">
@@ -635,9 +650,11 @@ $("#months").addEventListener("click",e=>{const b=e.target.closest(".mbtn");if(!
 
 function visible(){
   const q=state.q.trim().toLowerCase();
+  const pw=state.pairWith&&BYID[state.pairWith];
   return DATA.filter(d=>{
     if(state.month&&!d.months.has(state.month))return false;
-    if(state.month&&d.year&&!state.year&&!state.sel.has(d.id))return false;
+    if(pw){if(d===pw||!linked(d,pw))return false}
+    else if(state.month&&d.year&&!state.year&&!state.sel.has(d.id))return false;
     if(q&&!d.name.toLowerCase().includes(q)&&!CATNAME[d.cat].toLowerCase().includes(q))return false;
     return true;
   });
@@ -678,7 +695,7 @@ function renderHead(){
 }
 function renderSoon(){
   const m=state.month,el=$("#soon");
-  if(!m||state.q.trim()){el.innerHTML="";el.hidden=true;return}
+  if(!m||state.q.trim()||state.pairWith){el.innerHTML="";el.hidden=true;return}
   const nx=m%12+1;
   const inCat=d=>state.cat==="all"||d.cat===state.cat;
   const going=DATA.filter(d=>!d.year&&d.end===m&&d.months.size>1&&inCat(d));
@@ -697,6 +714,7 @@ fetch("info.json").then(r=>r.ok?r.json():null).then(j=>{if(!j)return;INFO=j;
   DATA.forEach(d=>PAIR[d.id]=new Set());
   Object.entries(j).forEach(([n,v])=>{const a=BYNAME[n];if(!a)return;(v.pairs||[]).forEach(p=>{const b=BYNAME[p];if(b&&b!==a){PAIR[a.id].add(b.id);PAIR[b.id].add(a.id)}})});
   if(cardId)renderCard();
+  if(state.pairWith)renderList();
 }).catch(()=>{});
 const linked=(a,b)=>!!(PAIR[a.id]&&PAIR[a.id].has(b.id));
 
@@ -732,6 +750,7 @@ function renderCard(){
       <div class="fact"><h4>prep &amp; cooking</h4><p>${esc(inf.prep)}</p></div>
       ${pairs.length?`<div class="fact"><h4>goes well with</h4><div class="pairs">${pairs.map(p=>`<button class="chip c-${p.cat}${p.months.has(mo)?"":" off"}" data-card="${p.id}" aria-pressed="${state.sel.has(p.id)}">${ico(p.cat)}${esc(p.name)}</button>`).join("")}</div></div>`:""}
       ${inf.extras&&inf.extras.length?`<div class="fact"><h4>and from the cupboard</h4><div class="extras">${inf.extras.map(esc).join(" · ")}</div></div>`:""}
+      ${PAIR[d.id]&&PAIR[d.id].size?`<button class="findpairs" data-pairwith="${d.id}">Show what goes with ${esc(d.name.toLowerCase())} →</button>`:""}
     </div>`;
   }else body=`<p class="nodata">${INFO===null?"Loading notes…":"No notes for this one yet."}</p>`;
   const el=$("#cardIn");el.className="sheet-in c-"+d.cat;
@@ -756,6 +775,8 @@ $("#card").addEventListener("click",e=>{
   if(e.target===$("#card")){closeCard();return}
   if(e.target.closest("#cardClose")){closeCard();return}
   if(e.target.closest("#cardAdd")){toggle(cardId);renderCard();return}
+  const pwb=e.target.closest("[data-pairwith]");if(pwb){const id=pwb.dataset.pairwith;closeCard();if(view!=="pick")setView("pick");setPairWith(id);return}
+  if(e.target.closest("#picShare")){sharePicture();return}
   const c=e.target.closest("[data-card]");if(c)openCard(c.dataset.card);
 });
 
@@ -781,15 +802,92 @@ function surprise(){
 }
 $("#surpriseBtn").addEventListener("click",surprise);
 
+/* "This month" picture: a 1080x1350 hand-drawn poster of what's at its best */
+const COL={veg:["#8DBF5A","#3F7A2A"],fruit:["#F28C5B","#BF4E26"],herb:["#B9C45A","#66751B"],wild:["#6FB8A8","#2A786A"],fungi:["#CDA46C","#85602E"],fish:["#72A9D8","#2D699B"],shell:["#EE8F8A","#B23F48"],meat:["#BF5D82","#8A2E52"],nut:["#E3B24C","#946C12"]};
+const SEASONINK=m=>[12,1,2].includes(m)?"#2D699B":m<=5?"#3F7A2A":m<=8?"#BF4E26":"#B23F48";
+function iconImage(cat){return new Promise(res=>{
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="96" height="96">${ICONS[cat].replace(/class="dab"/g,`fill="${COL[cat][0]}" fill-opacity=".55"`).replace(/class="ln"/g,'fill="none" stroke="#2B2723" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"')}</svg>`;
+  const img=new Image();img.onload=()=>res(img);img.onerror=()=>res(null);img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg)})}
+function washBlob(ctx,x,y,w,h,col,a){
+  ctx.save();ctx.globalAlpha=a;
+  for(const [dx,dy,rx,ry] of [[.3,.45,.55,.6],[.7,.55,.5,.55],[.5,.5,.62,.5]]){
+    const g=ctx.createRadialGradient(x+w*dx,y+h*dy,0,x+w*dx,y+h*dy,Math.max(w*rx,h*ry));
+    g.addColorStop(0,col);g.addColorStop(.7,col+"88");g.addColorStop(1,col+"00");
+    ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(x+w*dx,y+h*dy,w*rx,h*ry,0,0,Math.PI*2);ctx.fill()}
+  ctx.restore()}
+function wobblyLine(ctx,x1,x2,y,col,wid){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=wid;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x1,y);
+  for(let x=x1;x<x2;x+=60){ctx.quadraticCurveTo(x+30,y+(Math.random()*8-4),Math.min(x+60,x2),y+(Math.random()*4-2))}ctx.stroke();ctx.restore()}
+function wrapWords(ctx,words,maxW){const lines=[];let cur="";
+  words.forEach((w,i)=>{const piece=(cur?cur+"  \u00B7  ":"")+w;if(ctx.measureText(piece).width>maxW&&cur){lines.push(cur);cur=w}else cur=piece});if(cur)lines.push(cur);return lines}
+async function makePicture(){
+  const m=state.month||NOW,W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;const ctx=c.getContext("2d");
+  try{await Promise.all(['700 200px "Amatic SC"','500 50px "Caveat"','700 50px "Caveat"','34px "Patrick Hand"'].map(f=>document.fonts.load(f)));await document.fonts.ready}catch(e){}
+  ctx.fillStyle="#FDFCF8";ctx.fillRect(0,0,W,H);
+  for(let i=0;i<5000;i++){ctx.fillStyle=`rgba(110,95,70,${Math.random()*.05})`;ctx.fillRect(Math.random()*W,Math.random()*H,1.5,1.5)}
+  const ink="#2B2723",soft="#6E665D",FL='"Amatic SC","Patrick Hand",sans-serif',FS='"Caveat","Patrick Hand",cursive',FH='"Patrick Hand",sans-serif';
+  ctx.textBaseline="alphabetic";
+  ctx.fillStyle=soft;ctx.font=`500 56px ${FS}`;ctx.fillText(m===NOW?"what's at its best in":"what's at its best in",80,120);
+  // month, hand-lettered with a little jitter
+  const fit=(txt,size,weight,fam,maxW)=>{ctx.font=`${weight} ${size}px ${fam}`;const w=ctx.measureText(txt).width;return w>maxW?Math.floor(size*maxW/w):size};
+  const ms=fit(MONTHS[m-1],230,700,FL,W-170);ctx.font=`700 ${ms}px ${FL}`;let x=72;const mc=SEASONINK(m);
+  [...MONTHS[m-1]].forEach((ch,i)=>{ctx.save();ctx.translate(x,330+((i*37)%5-2)*2);ctx.rotate(((i*53)%7-3)*0.012);ctx.fillStyle=mc;ctx.fillText(ch,0,0);ctx.restore();x+=ctx.measureText(ch).width+4});
+  ctx.fillStyle=ink;if(ctx.letterSpacing!==undefined)ctx.letterSpacing="4px";ctx.font=`700 ${fit("SEASONAL UK PRODUCE, FISH & GAME",46,700,FL,W-170)}px ${FL}`;ctx.fillText("SEASONAL UK PRODUCE, FISH & GAME",82,395);if(ctx.letterSpacing!==undefined)ctx.letterSpacing="0px";
+  wobblyLine(ctx,80,W-80,425,ink,3);
+  // pick ingredients: peak first, topped up with in-season
+  const pool=DATA.filter(d=>d.months.has(m)&&!d.year&&!d.imp);
+  const ORDER=["veg","fruit","fish","meat","shell","fungi","herb","wild","nut"];
+  const groups=ORDER.map(k=>{const l=CATNAME[k];const all=pool.filter(d=>d.cat===k);const pk=all.filter(d=>d.peak.has(m)),rest=all.filter(d=>!d.peak.has(m));
+    return {k,l,items:[...pk,...rest].slice(0,5).map(d=>d.name)}}).filter(g=>g.items.length);
+  const icons={};await Promise.all(groups.map(async g=>icons[g.k]=await iconImage(g.k)));
+  const colW=440,cols=[{x:80,y:480},{x:560,y:480}],maxY=1190;
+  for(const g of groups){
+    ctx.font=`34px ${FH}`;let lines=wrapWords(ctx,g.items,colW);
+    const col=cols[0].y<=cols[1].y?cols[0]:cols[1];
+    let need=66+lines.length*42+26;
+    while(col.y+need>maxY&&g.items.length>2){g.items.pop();lines=wrapWords(ctx,g.items,colW);need=66+lines.length*42+26}
+    if(col.y+need>maxY)continue;
+    washBlob(ctx,col.x-6,col.y-10,320,74,COL[g.k][0],.45);
+    if(icons[g.k])ctx.drawImage(icons[g.k],col.x,col.y-8,68,68);
+    ctx.fillStyle=COL[g.k][1];ctx.font=`700 ${fit(g.l,58,700,FL,colW-80)}px ${FL}`;ctx.fillText(g.l,col.x+78,col.y+48);
+    ctx.fillStyle=ink;ctx.font=`34px ${FH}`;lines.forEach((ln,i)=>ctx.fillText(ln,col.x+4,col.y+104+i*42));
+    col.y+=need+12;
+  }
+  wobblyLine(ctx,80,W-80,1232,ink,2.5);
+  ctx.fillStyle=soft;ctx.font=`700 40px ${FS}`;ctx.fillText("eat what's good right now",80,1292);
+  const site=/github\.io$/.test(location.hostname)?(location.hostname+location.pathname).replace(/index\.html$/,"").replace(/\/$/,""):"Seasonal Larder";
+  ctx.font=`30px ${FH}`;ctx.textAlign="right";ctx.fillStyle=ink;ctx.fillText(site,W-80,1292);ctx.textAlign="left";
+  return new Promise(res=>c.toBlob(b=>res(b),"image/png"));
+}
+let picBlob=null,picURL=null;
+async function openPicture(){
+  const m=state.month||NOW,dlg=$("#card"),el=$("#cardIn");cardId=null;
+  el.className="sheet-in c-veg";
+  el.innerHTML=`<div class="grab"></div><div class="card-head">${ico("veg")}<div><div class="cat">share this month</div><h2 id="cardTitle">${MONTHS[m-1]}</h2></div><button class="x" id="cardClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="pic-wrap"><img id="picImg" alt="A hand-drawn poster of what's at its best in ${MONTHS[m-1]}"><p class="hint" id="picHint">Drawing your picture…</p><div class="pic-actions" id="picActions"></div></div>`;
+  if(!dlg.open){try{dlg.showModal()}catch(e){dlg.setAttribute("open","")}try{history.pushState({card:1},"")}catch(e){}}
+  const blob=await makePicture();if(!blob){$("#picHint").textContent="Sorry, the picture couldn't be made on this device.";return}
+  picBlob=blob;if(picURL)URL.revokeObjectURL(picURL);picURL=URL.createObjectURL(blob);
+  $("#picImg").src=picURL;
+  const file=new File([blob],`seasonal-larder-${MONTHS[m-1].toLowerCase()}.png`,{type:"image/png"});
+  const canFiles=!!(navigator.canShare&&navigator.canShare({files:[file]}));
+  $("#picActions").innerHTML=(canFiles?`<button class="card-add" id="picShare">Share picture</button>`:"")+(window.self===window.top?`<a class="share" href="${picURL}" download="${file.name}">Save picture</a>`:"");
+  $("#picHint").textContent="Or press and hold the picture to save or share it.";
+}
+async function sharePicture(){if(!picBlob)return;const m=state.month||NOW;
+  const file=new File([picBlob],`seasonal-larder-${MONTHS[m-1].toLowerCase()}.png`,{type:"image/png"});
+  try{await navigator.share({files:[file],title:"What's at its best in "+MONTHS[m-1]})}catch(e){}}
+$("#picBtn").addEventListener("click",openPicture);
+
 function renderList(){
   const base=visible();
   if(state.cat!=="all"&&!base.some(d=>d.cat===state.cat))state.cat="all";
-  renderCats(base);renderHead();renderSoon();
+  renderCats(base);renderHead();renderSoon();renderPairBar();
   const items=state.cat==="all"?base:base.filter(d=>d.cat===state.cat);
   const m=state.month;
   $("#countN").textContent=items.length;
   $("#yearToggle").setAttribute("aria-pressed",state.year);
   $("#yearToggle").hidden=!m;
+  if(!items.length&&state.pairWith){$("#list").innerHTML=`<div class="empty">Nothing in season ${m?"in "+MONTHS[m-1]+" ":""}goes with this one.<br>Try another month, or tap <b>All</b>.</div>`;return}
   if(!items.length){$("#list").innerHTML=`<div class="empty">Nothing matches “${esc(state.q)}”${m?" in "+MONTHS[m-1]:""}.<br>Try another month, or tap <b>All</b>.</div>`;return}
   let html="";
   CATS.forEach(([k,l])=>{
@@ -803,6 +901,16 @@ function renderList(){
   if(!m)html=html.replace(/ in season<\/span>/g,"</span>");
   $("#list").innerHTML=html;
 }
+function renderPairBar(){
+  const el=$("#pairBar"),d=state.pairWith&&BYID[state.pairWith];
+  if(!d){el.hidden=true;el.innerHTML="";return}
+  el.hidden=false;el.className="pairbar c-"+d.cat;
+  el.innerHTML=`<span class="script">goes with</span><button class="chip c-${d.cat}" data-info="${d.id}" aria-pressed="true">${ico(d.cat)}${esc(d.name)}</button><button class="clear" id="pairClear">show everything</button>
+    <p>Everything ${state.month?"in season in "+MONTHS[state.month-1]+" ":""}that pairs well with ${esc(d.name.toLowerCase())}, including all-year herbs and staples.</p>`;
+}
+function setPairWith(id){state.pairWith=id;state.cat="all";state.q="";$("#q").value="";renderList();const t=$("#pairBar");if(t&&id)window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+scrollY-260),behavior:"smooth"})}
+$("#pairBar").addEventListener("click",e=>{if(e.target.closest("#pairClear")){setPairWith(null);return}const c=e.target.closest("[data-info]");if(c)openCard(c.dataset.info)});
+
 function toggle(id){
   if(state.sel.has(id)){state.sel.delete(id)}else{state.sel.add(id)}
   save();

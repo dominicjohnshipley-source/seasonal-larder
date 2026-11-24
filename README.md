@@ -12,9 +12,11 @@ Seasonal Larder lists over 220 ingredients (vegetables, fruit, herbs, wild and f
 - **Filters:** narrow the list by category, or search for an ingredient.
 - **Basket:** tap ingredients to add them. Your basket is saved on your device.
 - **Ingredient cards:** tap the *i* next to any ingredient for an introduction, how to choose, store and prep it, what it goes with, and any safety notes.
+- **Pairing finder:** from any ingredient card, tap *Show what goes with…* to see only the in-season ingredients that pair with it.
+- **Share this month:** makes a hand-drawn picture of what's at its best, sized for Instagram or WhatsApp, to save or share.
 - **Surprise me:** one tap builds a basket of things that are at their best this month and go well together.
 - **Recipe prompt:** set servings, meal, time, diet, cuisine or mood, skill level and number of ideas. Then copy the prompt, send it to any app with your phone's share button, or open it straight in ChatGPT, Claude, Perplexity, Copilot or Gemini.
-- **Installable and offline:** add it to your home screen and it works without a signal once you've opened it.
+- **Installable and offline:** add it to your home screen and it works without a signal once you've opened it. On Android, use Chrome's menu → *Add to Home screen*. On iPhone, use Safari's Share button → *Add to Home Screen*.
 
 ## Privacy
 

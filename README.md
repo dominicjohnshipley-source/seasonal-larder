@@ -14,7 +14,9 @@ Seasonal Larder lists over 220 ingredients (vegetables, fruit, herbs, wild and f
 - **Ingredient cards:** tap the *i* next to any ingredient for an introduction, how to choose, store and prep it, what it goes with, and any safety notes.
 - **Pairing finder:** from any ingredient card, tap *Show what goes with…* to see only the in-season ingredients that pair with it.
 - **Share this month:** makes a hand-drawn picture of what's at its best, sized for Instagram or WhatsApp, to save or share.
-- **Surprise me:** one tap builds a basket of things that are at their best this month and go well together.
+- **Veggie & vegan:** tofu, tempeh, seitan, mycoprotein, plant-based sausages, burgers, mince, chicken pieces and bacon, British-grown pulses, plus halloumi, paneer and eggs for vegetarians. Shown all year alongside the seasonal produce.
+- **Nearby countries (optional):** tap *+ nearby* to add seasonal produce from nearby Europe that's common in UK shops, like Spanish citrus, Italian winter greens and French summer fruit. Each one shows where it comes from.
+- **Surprise me:** one tap builds a basket of things that are at their best this month and go well together. It follows the diet set on the recipe page, so a vegan or vegetarian setting builds the basket around a plant protein.
 - **Recipe prompt:** set servings, meal, time, diet, cuisine or mood, skill level and number of ideas. Then copy the prompt, send it to any app with your phone's share button, or open it straight in ChatGPT, Claude, Perplexity, Copilot or Gemini.
 - **Installable and offline:** add it to your home screen and it works without a signal once you've opened it. On Android, use Chrome's menu → *Add to Home screen*. On iPhone, use Safari's Share button → *Add to Home Screen*.
 
@@ -24,7 +26,7 @@ Everything runs in your browser. There are no accounts and no tracking, and noth
 
 ## Season data
 
-The seasons are typical for UK-grown, UK-landed or UK-shot produce. Real seasons shift by a few weeks with weather and region. Fish seasons avoid spawning periods where the sources say so, and game follows the legal shooting seasons in Great Britain. A few imported citrus fruits are included because they have a short, well-known season in UK shops.
+The seasons are typical for UK-grown, UK-landed or UK-shot produce. Real seasons shift by a few weeks with weather and region. Fish seasons avoid spawning periods where the sources say so, and game follows the legal shooting seasons in Great Britain. Produce from nearby countries is optional and uses the season from its origin (Spain, Italy, France, the Netherlands and so on), checked against growers' associations and trade press such as FreshPlaza, Foods & Wines from Spain and the Italian consortia.
 
 The seasons were checked against these sources in November 2026:
 
@@ -63,8 +65,8 @@ Seville oranges|fruit|1-2|1|i
 ```
 
 - **Months** are numbers, from 1 (January) to 12 (December). A range can wrap past the end of the year, so `10-3` means October to March. Separate several ranges with commas, like `3-5,9-10`.
-- **Categories** are `veg`, `fruit`, `herb`, `wild`, `fungi`, `fish`, `shell`, `meat` and `nut`.
-- **Flags** are `y` for available all year (hidden from "in season" unless switched on) and `i` for imported.
+- **Categories** are `veg`, `fruit`, `herb`, `wild`, `fungi`, `fish`, `shell`, `meat`, `plant` (veggie & vegan protein, always shown) and `nut`.
+- **Flags** are `y` for available all year (hidden from "in season" unless switched on), `i` for produce from a nearby country (add the origin as a sixth field, e.g. `Clementines|fruit|10-2|11-12|i|Spain`) and `d` for vegetarian items that aren't vegan.
 
 ## Run it locally
 

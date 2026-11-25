@@ -47,6 +47,7 @@ img{max-width:100%}
 .c-shell{--w:#EE8F8A;--k:#B23F48}
 .c-meat{--w:#BF5D82;--k:#8A2E52}
 .c-nut{--w:#E3B24C;--k:#946C12}
+.c-plant{--w:#A595D6;--k:#5B4B9E}
 .c-any{--w:#B5AEA2;--k:#2B2723}
 
 *{box-sizing:border-box}
@@ -100,7 +101,8 @@ h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
 .search input{flex:1;min-width:0;border:0;background:transparent;padding:6px 0;font-size:18px;outline:none}
 .search input::placeholder{color:var(--ink-soft)}
 .search:focus-within{border-bottom-style:dashed}
-.toggle{border:1.6px solid var(--ink);border-radius:var(--wob);padding:6px 10px;font-size:15px;white-space:nowrap;color:var(--ink-soft)}
+.toggles{display:flex;gap:6px;flex:none}
+.toggle{border:1.6px solid var(--ink);border-radius:var(--wob);padding:6px 9px;font-size:15px;white-space:nowrap;color:var(--ink-soft)}
 .toggle[aria-pressed="true"]{color:var(--ink);border-style:solid;background:color-mix(in srgb,#E3B24C 35%,transparent)}
 .toggle[aria-pressed="false"]{border-style:dashed}
 
@@ -319,7 +321,7 @@ textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);backg
       <div class="tools">
         <label class="search"><svg viewBox="0 0 24 24"><path d="M10.5 4.2c3.6-.3 6.4 2.4 6.3 5.9-.1 3.4-2.8 6.1-6.2 6.1-3.5 0-6.2-2.7-6.2-6 .1-3.3 2.6-5.8 6.1-6z"/><path d="m15.4 15.2 4.9 5.1"/></svg>
           <input id="q" type="search" placeholder="search for an ingredient…" autocomplete="off" aria-label="Search ingredients"></label>
-        <button class="toggle" id="yearToggle" aria-pressed="false" title="Include ingredients available all year">+ all-year</button>
+        <div class="toggles"><button class="toggle" id="yearToggle" aria-pressed="false" title="Include ingredients available all year">+ all-year</button><button class="toggle" id="nearToggle" aria-pressed="false" title="Include seasonal produce from nearby countries that's common in UK shops">+ nearby</button></div>
       </div>
       <div class="cats" id="cats" role="group" aria-label="Category"></div>
     </header>
@@ -335,7 +337,7 @@ textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);backg
         <span><span class="note new">just in!</span> first month</span>
         <span><span class="note last">last chance</span> final month</span>
       </div>
-      <p class="hint">Seasons are typical for UK-grown, UK-landed or UK-shot produce and shift a few weeks with weather and region. Game follows the legal shooting seasons. A few imported citrus fruits are included because they have a short, well-known season in UK shops.</p>
+      <p class="hint">Seasons are typical for UK-grown, UK-landed or UK-shot produce and shift a few weeks with weather and region. Game follows the legal shooting seasons. Tap <b>+ nearby</b> to add seasonal produce from nearby countries that is common in UK shops, like Spanish citrus and Italian winter greens. Veggie &amp; vegan proteins are available all year and always shown.</p>
     </div>
   </section>
 
@@ -369,7 +371,7 @@ textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);backg
 "use strict";
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const M3=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const CATS=[["veg","Vegetables"],["fruit","Fruit"],["herb","Herbs"],["wild","Wild & foraged"],["fungi","Mushrooms"],["fish","Fish"],["shell","Shellfish"],["meat","Meat & game"],["nut","Nuts"]];
+const CATS=[["veg","Vegetables"],["fruit","Fruit"],["herb","Herbs"],["wild","Wild & foraged"],["fungi","Mushrooms"],["fish","Fish"],["shell","Shellfish"],["meat","Meat & game"],["plant","Veggie & vegan"],["nut","Nuts"]];
 const CATNAME=Object.fromEntries(CATS);
 /* season colour for the month headline */
 const SEASON_CLASS=m=>!m?"c-any":[12,1,2].includes(m)?"c-fish":m<=5?"c-veg":m<=8?"c-fruit":"c-shell";
@@ -385,11 +387,13 @@ const ICONS={
  fish:DAB+'<path class="ln" d="M3.6 12.2c2.6-3.6 6.4-5 10.1-4.4 2.3.4 3.7 2 4.6 3.4 1-1.3 2.3-2.4 3.6-2.9-.4 1.9-.4 3.9.1 5.8-1.4-.5-2.7-1.6-3.6-2.8-1 1.6-2.5 3.1-4.8 3.5-3.7.5-7.4-.9-10-2.6z"/><circle class="ln" cx="7.2" cy="11.4" r=".6"/><path class="ln" d="M9.8 9.4c.7 1.4.7 3.2 0 4.6"/>',
  shell:DAB+'<path class="ln" d="M12 19.6c-3-.1-6.9-2.4-7.8-7C3.6 9 7 5.2 12 5.1c5-.1 8.4 3.8 7.8 7.4-.8 4.7-4.8 7.2-7.8 7.1z"/><path class="ln" d="M12 19.5V5.4M12 19.5 7 6.6M12 19.5 4.6 10M12 19.5l5-12.9M12 19.5 19.4 10"/><path class="ln" d="M9.8 19.2l-.4 1.5h5.2l-.4-1.5"/>',
  meat:DAB+'<path class="ln" d="M5.2 19.3C6 14.8 9 7.6 13.8 4.6c1.6-1 3.1.4 2.4 2.1C14.2 11.6 9 17 5.2 19.3z"/><path class="ln" d="M5.2 19.3c3.7-4.6 6.8-9.1 9.4-13.5M9.4 13.4l-2.7-.6M11.6 10.4 9 9.4M8 15.6l-2.5.2M12.9 12.2l2.2-.3M10.8 15l2.3.2"/>',
+ plant:DAB+'<path class="ln" d="M4.6 15.8c2.4-4.6 7.2-8.6 13.3-10.4 1.4-.4 2.2.9 1.6 2-2.8 5-7.8 8.7-13.3 10.1-1.3.3-2.1-.6-1.6-1.7z"/><circle class="ln" cx="8.9" cy="14.3" r="1.5"/><circle class="ln" cx="12.3" cy="11.6" r="1.6"/><circle class="ln" cx="15.6" cy="8.9" r="1.4"/><path class="ln" d="M18.9 6.3c.6-1.1 1.3-1.9 2.3-2.5"/>',
  nut:DAB+'<path class="ln" d="M6.6 11.4c-.2 4.2 2.4 8 5.4 8.4 3.1-.4 5.6-4.1 5.4-8.4"/><path class="ln" d="M5.4 11.5c.2-3 3-4.8 6.6-4.8 3.6 0 6.4 1.8 6.6 4.8-4.4.7-8.8.7-13.2 0z"/><path class="ln" d="M12 6.7c0-1.2.3-2.3 1-3.2M7.8 9.4l1 .2M11 8.6l.9.2M14.2 9.2l.9.2"/>'
 };
 const ico=(k,cls)=>`<span class="ico${cls?" "+cls:""}" aria-hidden="true"><svg viewBox="0 0 24 24">${ICONS[k]||""}</svg></span>`;
 
-/* name | category | season months | peak months | flags (y = all year, i = imported) */
+/* name | category | season months | peak months | flags | origin
+   flags: y = all year, i = from a nearby country (origin given), d = vegetarian but not vegan (dairy or eggs) */
 const RAW=`Asparagus|veg|4-6|5
 Globe artichokes|veg|6-11|7-9
 Aubergines|veg|7-10|8-9
@@ -486,10 +490,6 @@ Melons|fruit|7-9
 English grapes|fruit|9-10
 Forced rhubarb|fruit|1-3|2
 Outdoor rhubarb|fruit|4-7|4-5
-Seville oranges|fruit|1-2|1|i
-Blood oranges|fruit|1-3|2|i
-Clementines|fruit|11-1|12|i
-Pomegranates|fruit|10-1|11-12|i
 Basil|herb|6-9|7-8
 Bay|herb|1-12||y
 Borage|herb|6-9
@@ -612,22 +612,82 @@ Wood pigeon|meat|1-12|5-10|y
 Kentish cobnuts|nut|8-10|9
 Hazelnuts|nut|9-10
 Wet walnuts|nut|9-10
-Sweet chestnuts|nut|10-12|10-11`;
+Sweet chestnuts|nut|10-12|10-11
+Firm tofu|plant|1-12||y
+Silken tofu|plant|1-12||y
+Smoked tofu|plant|1-12||y
+Tempeh|plant|1-12||y
+Seitan|plant|1-12||y
+Mycoprotein (Quorn)|plant|1-12||y
+Soya mince (TVP)|plant|1-12||y
+Plant-based mince|plant|1-12||y
+Plant-based sausages|plant|1-12||y
+Young jackfruit|plant|1-12||y
+Edamame (frozen)|plant|1-12||y
+British fava beans (dried)|plant|1-12||y
+Carlin peas|plant|1-12||y
+Yellow split peas|plant|1-12||y
+Marrowfat peas|plant|1-12||y
+Chickpeas|plant|1-12||y
+Red lentils|plant|1-12||y
+Green & Puy-style lentils|plant|1-12||y
+Butter beans|plant|1-12||y
+Black beans|plant|1-12||y
+Haricot beans|plant|1-12||y
+British quinoa|plant|1-12||y
+Hemp seeds|plant|1-12||y
+Plant-based burgers|plant|1-12||y
+Plant-based chicken pieces|plant|1-12||y
+Plant-based bacon|plant|1-12||y
+Plant-based meatballs|plant|1-12||y
+Halloumi|plant|1-12||yd
+Paneer|plant|1-12||yd
+Free-range eggs|plant|1-12||yd
+White asparagus|veg|4-6|5|i|Netherlands & Germany
+Wild asparagus|veg|3-5|4|i|Italy, Spain & France
+Agretti|veg|3-5|4|i|Italy
+Spring artichokes|veg|3-6|4-5|i|Italy & France
+Cime di rapa|veg|10-3|11-2|i|Italy
+Puntarelle|veg|11-3|12-2|i|Italy
+Radicchio di Treviso|veg|9-3|12-2|i|Italy
+Padrón peppers|veg|5-10|7-9|i|Spain
+Avocados|veg|11-5|12-3|i|Spain
+Black truffle|fungi|12-3|1-2|i|France, Italy & Spain
+White truffle|fungi|10-1|11|i|Italy
+Seville oranges|fruit|12-2|1|i|Spain
+Blood oranges|fruit|12-4|1-3|i|Italy & Spain
+Clementines|fruit|10-2|11-12|i|Spain
+Satsumas|fruit|9-12|10-11|i|Spain
+Navel oranges|fruit|11-5|12-3|i|Spain
+Lemons|fruit|10-7|12-4|i|Spain & Italy
+Amalfi lemons|fruit|3-7|4-6|i|Italy
+Bergamot|fruit|11-2|12-1|i|Italy
+Pomegranates|fruit|9-1|10-11|i|Spain
+Persimmons (kaki)|fruit|10-1|11|i|Spain
+Kiwi fruit|fruit|11-5|12-3|i|Italy & Greece
+Spanish strawberries|fruit|1-5|3-4|i|Spain
+Peaches & nectarines|fruit|5-9|7-8|i|Spain, Italy & France
+Flat peaches|fruit|5-9|6-8|i|Spain
+Continental apricots|fruit|5-8|6-7|i|Spain & France
+Charentais melons|fruit|6-9|7-8|i|France
+Watermelon|fruit|5-9|6-8|i|Spain
+Italian grapes|fruit|7-11|8-10|i|Italy
+Mirabelle plums|fruit|8-9|8|i|France`;
 
 function range(s){const out=new Set();if(!s)return out;s.split(",").forEach(p=>{const [a,b]=p.split("-").map(Number);if(!b){out.add(a);return}let m=a;for(let k=0;k<12;k++){out.add(m);if(m===b)break;m=m%12+1}});return out}
-const DATA=RAW.trim().split("\n").map((l,i)=>{const [name,cat,s,pk,fl]=l.split("|");const months=range(s);return{id:"i"+i+"-"+name.toLowerCase().replace(/[^a-z]+/g,"-"),name,cat,months,peak:range(pk),year:(fl||"").includes("y")||months.size===12,imp:(fl||"").includes("i"),start:+s.split("-")[0],end:+(s.split("-")[1]||s)}});
+const DATA=RAW.trim().split("\n").map((l,i)=>{const [name,cat,s,pk,fl,origin]=l.split("|");const months=range(s);return{id:"i"+i+"-"+name.toLowerCase().replace(/[^a-z]+/g,"-"),name,cat,months,peak:range(pk),year:(fl||"").includes("y")||months.size===12,imp:(fl||"").includes("i"),origin:origin||"",dairy:(fl||"").includes("d"),start:+s.split("-")[0],end:+(s.split("-")[1]||s)}});
 const BYID=Object.fromEntries(DATA.map(d=>[d.id,d]));
 const BYNAME=Object.fromEntries(DATA.map(d=>[d.name,d]));
 
 /* storage */
 const KEY="seasonal-larder-v1";
 function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({sel:[...state.sel].map(id=>BYID[id]&&BYID[id].name).filter(Boolean),opts:state.opts,year:state.year}))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({sel:[...state.sel].map(id=>BYID[id]&&BYID[id].name).filter(Boolean),opts:state.opts,year:state.year,near:state.near}))}catch(e){}}
 
 const NOW=new Date().getMonth()+1;
 const saved=load()||{};
 const state={
-  month:NOW, cat:"all", q:"", year:!!saved.year,
+  month:NOW, cat:"all", q:"", year:!!saved.year, near:!!saved.near,
   sel:new Set((saved.sel||[]).map(n=>BYNAME[n]&&BYNAME[n].id).filter(Boolean)),
   opts:Object.assign({servings:2,diet:"No restrictions",time:"Up to 45 min",meal:"Dinner",mood:[],skill:"Confident home cook",ideas:4,mode:"core",pantry:true,uk:true,extra:""},saved.opts||{})
 };
@@ -653,8 +713,9 @@ function visible(){
   const pw=state.pairWith&&BYID[state.pairWith];
   return DATA.filter(d=>{
     if(state.month&&!d.months.has(state.month))return false;
+    if(d.imp&&!state.near&&!state.sel.has(d.id))return false;
     if(pw){if(d===pw||!linked(d,pw))return false}
-    else if(state.month&&d.year&&!state.year&&!state.sel.has(d.id))return false;
+    else if(state.month&&d.year&&!state.year&&d.cat!=="plant"&&!state.sel.has(d.id))return false;
     if(q&&!d.name.toLowerCase().includes(q)&&!CATNAME[d.cat].toLowerCase().includes(q))return false;
     return true;
   });
@@ -667,16 +728,18 @@ function renderCats(base){
 $("#cats").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;state.cat=b.dataset.c;renderList()});
 $("#q").addEventListener("input",e=>{state.q=e.target.value;renderList()});
 $("#yearToggle").addEventListener("click",()=>{state.year=!state.year;save();renderList()});
+$("#nearToggle").addEventListener("click",()=>{state.near=!state.near;save();renderList();toast(state.near?"Showing produce from nearby countries too":"UK produce only")});
 
 function notes(d){
   const m=state.month;let b="";
-  if(d.year)b+=`<span class="note dim">all year</span>`;
+  if(d.year&&d.cat!=="plant")b+=`<span class="note dim">all year</span>`;
   else if(m){
     if(m===d.start&&d.months.size>1)b+=`<span class="note new">← just in!</span>`;
     else if(m===d.end&&d.months.size>1)b+=`<span class="note last">← last chance</span>`;
     else if(d.peak.has(m))b+=`<span class="note">← at its best</span>`;
   }
-  if(d.imp)b+=`<span class="note dim">imported</span>`;
+  if(d.imp)b+=`<span class="note dim">from ${esc(d.origin)}</span>`;
+  if(d.dairy)b+=`<span class="note dim">vegetarian</span>`;
   return b;
 }
 function bar(d){
@@ -697,7 +760,7 @@ function renderSoon(){
   const m=state.month,el=$("#soon");
   if(!m||state.q.trim()||state.pairWith){el.innerHTML="";el.hidden=true;return}
   const nx=m%12+1;
-  const inCat=d=>state.cat==="all"||d.cat===state.cat;
+  const inCat=d=>(state.cat==="all"||d.cat===state.cat)&&(!d.imp||state.near);
   const going=DATA.filter(d=>!d.year&&d.end===m&&d.months.size>1&&inCat(d));
   const coming=DATA.filter(d=>!d.year&&d.start===nx&&!d.months.has(m)&&inCat(d));
   const chipsOf=list=>list.sort((a,b)=>a.name.localeCompare(b.name)).map(d=>{const on=state.sel.has(d.id);return `<button class="chip c-${d.cat}" data-soon="${d.id}" aria-pressed="${on}">${ico(d.cat)}${esc(d.name)}<span class="plus">${on?"✓":"+"}</span></button>`}).join("");
@@ -755,7 +818,7 @@ function renderCard(){
   }else body=`<p class="nodata">${INFO===null?"Loading notes…":"No notes for this one yet."}</p>`;
   const el=$("#cardIn");el.className="sheet-in c-"+d.cat;
   el.innerHTML=`<div class="grab"></div>
-  <div class="card-head">${ico(d.cat)}<div><div class="cat">${esc(CATNAME[d.cat].toLowerCase())}${d.imp?" · imported":""}</div><h2 id="cardTitle">${esc(d.name)}</h2></div>
+  <div class="card-head">${ico(d.cat)}<div><div class="cat">${esc(CATNAME[d.cat].toLowerCase())}${d.imp?" · from "+esc(d.origin):""}${d.dairy?" · vegetarian, not vegan":""}</div><h2 id="cardTitle">${esc(d.name)}</h2></div>
     <button class="x" id="cardClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
   <div class="status${st.out?" out":""}">${esc(st.t)}</div>
   <div class="card-bar">${bar}</div>
@@ -783,16 +846,17 @@ $("#card").addEventListener("click",e=>{
 /* Surprise basket: a fish or meat first, then veg, fruit or nut, and a herb, wild green or mushroom,
    each picked to go with what's already in the basket (from the pairing notes), leaning to what's at its best. */
 function surprise(){
-  const m=state.month||NOW;
-  const pool=DATA.filter(d=>d.months.has(m)&&!d.year&&!d.imp);
+  const m=state.month||NOW,diet=state.opts.diet;
+  const pool=DATA.filter(d=>d.months.has(m)&&(!d.year||d.cat==="plant")&&(!d.imp||state.near)&&!(diet==="Vegan"&&d.dairy));
   const picked=[];
+  const PROTEIN=/Vegan|Vegetarian/.test(diet)?["plant"]:diet==="Pescatarian"?["fish","shell"]:["fish","shell","meat"];
   const pickOne=cats=>{
     const c=pool.filter(d=>cats.includes(d.cat)&&!picked.includes(d));if(!c.length)return;
     const w=c.map(d=>{const base=d.peak.has(m)?2.5:1;if(!INFO||!picked.length)return base;
       const links=picked.reduce((n,p)=>n+(linked(d,p)?1:0),0);return base*(links?Math.pow(4,links):0.08)});
     const t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t,i=0;while((r-=w[i])>0&&i<c.length-1)i++;picked.push(c[i]);
   };
-  pickOne(["fish","shell","meat"]);pickOne(["veg"]);pickOne(["fruit","nut"]);pickOne(["herb","wild","fungi"]);pickOne(["veg"]);
+  pickOne(PROTEIN);pickOne(["veg"]);pickOne(["fruit","nut"]);pickOne(["herb","wild","fungi"]);pickOne(["veg"]);
   if(!picked.length){toast("Nothing in season to pick from");return}
   const prev=new Set(state.sel);
   state.sel=new Set(picked.map(d=>d.id));save();
@@ -887,13 +951,14 @@ function renderList(){
   $("#countN").textContent=items.length;
   $("#yearToggle").setAttribute("aria-pressed",state.year);
   $("#yearToggle").hidden=!m;
+  $("#nearToggle").setAttribute("aria-pressed",state.near);
   if(!items.length&&state.pairWith){$("#list").innerHTML=`<div class="empty">Nothing in season ${m?"in "+MONTHS[m-1]+" ":""}goes with this one.<br>Try another month, or tap <b>All</b>.</div>`;return}
   if(!items.length){$("#list").innerHTML=`<div class="empty">Nothing matches “${esc(state.q)}”${m?" in "+MONTHS[m-1]:""}.<br>Try another month, or tap <b>All</b>.</div>`;return}
   let html="";
   CATS.forEach(([k,l])=>{
     const g=items.filter(d=>d.cat===k);if(!g.length)return;
     g.sort((a,b)=>(a.year-b.year)||((m&&b.peak.has(m))-(m&&a.peak.has(m)))||a.name.localeCompare(b.name));
-    html+=`<section class="group c-${k}"><h2>${ico(k)}${esc(l)}<span class="n">${g.length} in season</span></h2>${squiggle()}<ul class="list">`+
+    html+=`<section class="group c-${k}"><h2>${ico(k)}${esc(l)}<span class="n">${k==="plant"?g.length+", all year":g.length+" in season"}</span></h2>${squiggle()}<ul class="list">`+
       g.map(d=>{const on=state.sel.has(d.id);return `<li class="item${on?" sel":""}" data-id="${d.id}" role="button" tabindex="0" aria-pressed="${on}" aria-label="${esc(d.name)}, ${seasonText(d)}">
         <div style="min-width:0"><div class="name">${esc(d.name)}${notes(d)}</div>${bar(d)}</div>
         <button class="info" data-info="${d.id}" aria-label="About ${esc(d.name)}">i</button><span class="add" aria-hidden="true">${on?ICON_TICK:ICON_PLUS}</span></li>`}).join("")+`</ul></section>`;
@@ -955,11 +1020,11 @@ function buildPrompt(){
   const L=[];
   L.push(`You are an experienced British home cook and recipe developer who cooks with the seasons. Suggest recipes for me based on the ingredients below.`);
   L.push("");
-  L.push(`## My ingredients (in season in the UK in ${mName})`);
+  L.push(`## My ingredients (in season ${s.some(d=>d.imp)?"in the UK or nearby Europe":"in the UK"} in ${mName})`);
   s.forEach(d=>{const notes=[];
     if(!d.year){notes.push(`season ${seasonText(d)}`);const mo=state.month||NOW;if(d.peak.has(mo))notes.push("at its peak");if(mo===d.end&&d.months.size>1)notes.push("end of season")}
     else notes.push("available all year");
-    if(d.imp)notes.push("imported");
+    if(d.imp)notes.push("from "+d.origin);
     L.push(`- ${d.name} (${notes.join(", ")})`)});
   L.push("");
   L.push("## What I'd like");

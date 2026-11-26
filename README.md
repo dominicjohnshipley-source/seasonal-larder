@@ -15,9 +15,13 @@ Seasonal Larder lists over 220 ingredients (vegetables, fruit, herbs, wild and f
 - **Pairing finder:** from any ingredient card, tap *Show what goes with…* to see only the in-season ingredients that pair with it.
 - **Share this month:** makes a hand-drawn picture of what's at its best, sized for Instagram or WhatsApp, to save or share.
 - **Veggie & vegan:** tofu, tempeh, seitan, mycoprotein, plant-based sausages, burgers, mince, chicken pieces and bacon, British-grown pulses, plus halloumi, paneer and eggs for vegetarians. Shown all year alongside the seasonal produce.
-- **Nearby countries (optional):** tap *+ nearby* to add seasonal produce from nearby Europe that's common in UK shops, like Spanish citrus, Italian winter greens and French summer fruit. Each one shows where it comes from.
+- **Nearby countries (optional):** turn on *nearby countries* in settings to add seasonal produce from nearby Europe that's common in UK shops, like Spanish citrus, Italian winter greens and French summer fruit. Each one shows where it comes from.
+- **Settings:** set your diet (and hide what you don't eat), how many you usually cook for, allergies and dislikes, your kitchen kit (no oven, air fryer, slow cooker…) and what's always in the cupboard. All of it goes into every recipe prompt.
+- **Nothing wasted:** every ingredient card has a tip for using the bits people usually throw away.
+- **Light and dark:** a paper theme for the day and a "kitchen at night" dark theme, following your phone or set by hand.
+- **Welcome tour:** a short three-step introduction the first time you open it.
 - **Surprise me:** one tap builds a basket of things that are at their best this month and go well together. It follows the diet set on the recipe page, so a vegan or vegetarian setting builds the basket around a plant protein.
-- **Recipe prompt:** set servings, meal, time, diet, cuisine or mood, skill level and number of ideas. Then copy the prompt, send it to any app with your phone's share button, or open it straight in ChatGPT, Claude, Perplexity, Copilot or Gemini.
+- **Recipe prompt:** set servings, meal, time, diet, cuisine (23 to choose from, or type your own), mood, skill level and number of ideas. Then copy the prompt, send it to any app with your phone's share button, or open it straight in ChatGPT, Claude, Perplexity, Copilot or Gemini.
 - **Installable and offline:** add it to your home screen and it works without a signal once you've opened it. On Android, use Chrome's menu → *Add to Home screen*. On iPhone, use Safari's Share button → *Add to Home Screen*.
 
 ## Privacy
@@ -50,7 +54,7 @@ Spotted a season that's wrong? Open an issue or a pull request.
 
 ### Ingredient notes
 
-The ingredient cards are in `info.json`, one entry per ingredient name, with `about`, `choose`, `store`, `prep`, `pairs` (other ingredient names from the list, which Surprise me uses to build baskets that go together), `extras` and an optional `caution`. The notes are general kitchen guidance. Always be certain of the identification before eating anything foraged.
+The ingredient cards are in `info.json`, one entry per ingredient name, with `about`, `choose`, `store`, `prep`, `pairs` (other ingredient names from the list, which Surprise me uses to build baskets that go together), `extras`, `waste` (a zero-waste tip) and an optional `caution`. The notes are general kitchen guidance. Always be certain of the identification before eating anything foraged.
 
 ### Editing the data
 

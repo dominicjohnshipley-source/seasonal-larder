@@ -25,9 +25,12 @@ body{margin:0}
 img{max-width:100%}
 /* Layout: an illustrated cookbook page on a phone. Ink line work + watercolour washes on paper, hand-lettered heads,
    handwritten annotations. One colour per ingredient family. Deliberately single (light, paper) theme. */
+
 :root{
   color-scheme:light;
-  --paper:#FDFCF8; --paper-2:#F5F2EA; --ink:#2B2723; --ink-soft:#6E665D; --rule:#D9D3C7;
+    --paper:#FDFCF8; --paper-2:#F5F2EA; --ink:#2B2723; --ink-soft:#6E665D; --rule:#D9D3C7;
+  --red:#B23F48; --amber:#946C12;
+  --wave:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' preserveAspectRatio='none'%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6 V10 H0Z' fill='%23FDFCF8'/%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6' fill='none' stroke='%232B2723' stroke-width='1.4'/%3E%3C/svg%3E");
   --f-letter:"Amatic SC","Patrick Hand",ui-sans-serif,sans-serif;
   --f-script:"Caveat","Patrick Hand",cursive;
   --f-hand:"Patrick Hand","Segoe Print","Comic Sans MS",ui-sans-serif,sans-serif;
@@ -49,6 +52,36 @@ img{max-width:100%}
 .c-nut{--w:#E3B24C;--k:#946C12}
 .c-plant{--w:#A595D6;--k:#5B4B9E}
 .c-any{--w:#B5AEA2;--k:#2B2723}
+/* Kitchen-at-night theme */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--paper:#1C1916; --paper-2:#26221E; --ink:#EDE6DA; --ink-soft:#ABA193; --rule:#3B352F; --red:#F29C97; --amber:#E9BE60; color-scheme:dark;
+  --wave:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' preserveAspectRatio='none'%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6 V10 H0Z' fill='%231C1916'/%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6' fill='none' stroke='%23EDE6DA' stroke-width='1.4'/%3E%3C/svg%3E");}
+  :root:not([data-theme="light"]) .c-veg{--k:#9DD27C}
+  :root:not([data-theme="light"]) .c-fruit{--k:#F6A880}
+  :root:not([data-theme="light"]) .c-herb{--k:#CBD56E}
+  :root:not([data-theme="light"]) .c-wild{--k:#86D3C2}
+  :root:not([data-theme="light"]) .c-fungi{--k:#DFBA86}
+  :root:not([data-theme="light"]) .c-fish{--k:#93C3EC}
+  :root:not([data-theme="light"]) .c-shell{--k:#F4A29D}
+  :root:not([data-theme="light"]) .c-meat{--k:#E592B2}
+  :root:not([data-theme="light"]) .c-nut{--k:#ECC664}
+  :root:not([data-theme="light"]) .c-plant{--k:#BCAEF2}
+  :root:not([data-theme="light"]) .c-any{--k:#EDE6DA}
+}
+:root[data-theme="dark"]{--paper:#1C1916; --paper-2:#26221E; --ink:#EDE6DA; --ink-soft:#ABA193; --rule:#3B352F; --red:#F29C97; --amber:#E9BE60; color-scheme:dark;
+  --wave:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' preserveAspectRatio='none'%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6 V10 H0Z' fill='%231C1916'/%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6' fill='none' stroke='%23EDE6DA' stroke-width='1.4'/%3E%3C/svg%3E");}
+:root[data-theme="dark"] .c-veg{--k:#9DD27C}
+:root[data-theme="dark"] .c-fruit{--k:#F6A880}
+:root[data-theme="dark"] .c-herb{--k:#CBD56E}
+:root[data-theme="dark"] .c-wild{--k:#86D3C2}
+:root[data-theme="dark"] .c-fungi{--k:#DFBA86}
+:root[data-theme="dark"] .c-fish{--k:#93C3EC}
+:root[data-theme="dark"] .c-shell{--k:#F4A29D}
+:root[data-theme="dark"] .c-meat{--k:#E592B2}
+:root[data-theme="dark"] .c-nut{--k:#ECC664}
+:root[data-theme="dark"] .c-plant{--k:#BCAEF2}
+:root[data-theme="dark"] .c-any{--k:#EDE6DA}
+
 
 *{box-sizing:border-box}
 html{background:var(--paper)}
@@ -101,7 +134,11 @@ h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
 .search input{flex:1;min-width:0;border:0;background:transparent;padding:6px 0;font-size:18px;outline:none}
 .search input::placeholder{color:var(--ink-soft)}
 .search:focus-within{border-bottom-style:dashed}
-.toggles{display:flex;gap:6px;flex:none}
+.setbtn{flex:none;border:1.6px solid var(--ink);border-radius:var(--wob);padding:5px 10px 5px 8px;display:inline-flex;align-items:center;gap:6px;font-size:16px;color:var(--ink);position:relative}
+.setbtn svg{width:20px;height:20px;stroke:var(--ink);fill:var(--paper);stroke-width:1.6;stroke-linecap:round}
+.setbtn .dot{position:absolute;top:-4px;right:-4px;width:11px;height:11px;border-radius:50%;background:#F28C5B;border:1.5px solid var(--paper)}
+.active{display:flex;gap:6px;flex-wrap:wrap;margin-top:-2px}
+.active button{border:1.3px dashed var(--ink-soft);border-radius:var(--wob2);padding:2px 10px;font-size:14px;color:var(--ink-soft)}
 .toggle{border:1.6px solid var(--ink);border-radius:var(--wob);padding:6px 9px;font-size:15px;white-space:nowrap;color:var(--ink-soft)}
 .toggle[aria-pressed="true"]{color:var(--ink);border-style:solid;background:color-mix(in srgb,#E3B24C 35%,transparent)}
 .toggle[aria-pressed="false"]{border-style:dashed}
@@ -134,8 +171,8 @@ h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
 .item:last-child{border-bottom:0}
 .item .name{font-size:20px;line-height:1.15;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:8px;row-gap:0}
 .note{font-family:var(--f-script);font-weight:700;font-size:18px;color:var(--k);white-space:nowrap}
-.note.last{color:#B23F48}
-.note.new{color:#946C12}
+.note.last{color:var(--red)}
+.note.new{color:var(--amber)}
 .note.dim{color:var(--ink-soft);font-weight:500}
 .bar{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:9px;max-width:250px;position:relative}
 .bar i{height:9px;border-radius:var(--wob);border:1px dotted color-mix(in srgb,var(--ink) 30%,transparent);position:relative}
@@ -183,8 +220,8 @@ h1,h2,h3{margin:0;font-weight:700;text-wrap:balance}
 .soon-row{display:flex;flex-direction:column;gap:6px}
 .soon-row h3{font-family:var(--f-letter);font-size:28px;letter-spacing:.03em;line-height:1;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .soon-row h3 .script{font-size:19px}
-.soon-row.going h3{color:#B23F48}
-.soon-row.coming h3{color:#946C12}
+.soon-row.going h3{color:var(--red)}
+.soon-row.coming h3{color:var(--amber)}
 .soon-scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 4px;margin-inline:-2px}
 .soon-scroll::-webkit-scrollbar{display:none}
 .soon-scroll .chip{padding:4px 10px 4px 6px}
@@ -217,8 +254,10 @@ dialog.sheet[open]{animation:up .22s ease-out}
 .facts{display:flex;flex-direction:column;gap:12px}
 .fact h4{margin:0 0 2px;font-family:var(--f-script);font-weight:700;font-size:21px;color:var(--k);line-height:1.1}
 .fact p{margin:0;font-size:17px;line-height:1.45}
-.caution{border:1.6px dashed #B23F48;border-radius:var(--wob2);padding:10px 12px;font-size:16px;line-height:1.4;color:var(--ink);background:color-mix(in srgb,#EE8F8A 14%,transparent)}
-.caution b{font-family:var(--f-script);font-size:20px;color:#B23F48;margin-right:4px}
+.fact.waste{border-left:3px solid color-mix(in srgb,#8DBF5A 70%,transparent);padding-left:10px}
+.fact.waste h4{color:var(--ink)}
+.caution{border:1.6px dashed var(--red);border-radius:var(--wob2);padding:10px 12px;font-size:16px;line-height:1.4;color:var(--ink);background:color-mix(in srgb,#EE8F8A 14%,transparent)}
+.caution b{font-family:var(--f-script);font-size:20px;color:var(--red);margin-right:4px}
 .pairs{display:flex;flex-wrap:wrap;gap:6px}
 .pairs .chip{padding:4px 10px 4px 6px}
 .pairs .chip .ico{width:22px;height:22px}
@@ -229,6 +268,26 @@ dialog.sheet[open]{animation:up .22s ease-out}
   radial-gradient(ellipse 60% 70% at 30% 40%, color-mix(in srgb,var(--w) 75%,transparent), transparent 75%),color-mix(in srgb,var(--w) 45%,transparent)}
 .card-add.on{background:var(--ink);color:var(--paper)}
 .nodata{font-size:16px;color:var(--ink-soft)}
+
+/* Settings + welcome */
+.setgroup{display:flex;flex-direction:column;gap:12px;padding-bottom:14px;border-bottom:1px dashed var(--rule)}
+.setgroup h4{margin:0;font-family:var(--f-letter);font-size:30px;letter-spacing:.04em;color:var(--k);line-height:1}
+.switch .sub{display:block;font-family:var(--f-hand);font-size:15px;color:var(--ink-soft);line-height:1.3;margin-top:2px}
+.switch{align-items:flex-start}
+.sw-txt{flex:1;min-width:0}
+input.line{width:100%;border:0;border-bottom:1.6px solid var(--ink);background:transparent;padding:6px 2px;font-size:18px;outline:none}
+input.line:focus{border-bottom-style:dashed}
+input.line::placeholder{color:var(--ink-soft)}
+.welcome{display:flex;flex-direction:column;gap:6px;padding-top:4px}
+.welcome .big{font-size:clamp(48px,14vw,72px)}
+.welcome .about{margin:4px 0 6px}
+.wsteps{list-style:none;margin:6px 0 4px;padding:0;display:flex;flex-direction:column;gap:14px}
+.wsteps li{display:grid;grid-template-columns:30px 44px minmax(0,1fr);gap:10px;align-items:start}
+.wsteps .num{font-family:var(--f-letter);font-size:46px;line-height:.85;color:var(--k);text-align:center}
+.wsteps .ico{width:44px;height:44px}
+.wsteps div > b{font-family:var(--f-letter);font-size:27px;letter-spacing:.03em;font-weight:700;line-height:1}
+.wsteps p{margin:2px 0 0;font-size:17px;line-height:1.35}
+.info-ex{display:inline-grid;place-items:center;width:22px;height:22px;border:1.3px solid var(--ink-soft);border-radius:50%;font-family:var(--f-script);font-weight:700;font-size:15px;color:var(--ink-soft);vertical-align:1px}
 
 /* Send-to */
 .sendto{display:flex;flex-direction:column;gap:8px}
@@ -243,7 +302,7 @@ dialog.sheet[open]{animation:up .22s ease-out}
 /* Dock */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);padding-bottom:env(safe-area-inset-bottom,0px)}
 .dock::before{content:"";position:absolute;left:0;right:0;top:-8px;height:10px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' preserveAspectRatio='none'%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6 V10 H0Z' fill='%23FDFCF8'/%3E%3Cpath d='M0 8 Q 10 3 20 7 T 40 6 T 60 8 T 80 5 T 100 7 T 120 6' fill='none' stroke='%232B2723' stroke-width='1.4'/%3E%3C/svg%3E") repeat-x;background-size:120px 10px}
+  background:var(--wave) repeat-x;background-size:120px 10px}
 .dock-in{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .tray{display:flex;align-items:center;gap:8px;padding-block:8px 0;min-height:44px}
 .tray-label{font-family:var(--f-script);font-size:20px;color:var(--ink-soft);white-space:nowrap}
@@ -260,7 +319,7 @@ dialog.sheet[open]{animation:up .22s ease-out}
 .tab{white-space:nowrap;border:1.6px solid var(--ink);border-radius:var(--wob);font-family:var(--f-letter);font-size:25px;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink)}
 .tab+.tab{border-radius:var(--wob2)}
 .tab[aria-current="page"]{background:var(--ink);color:var(--paper)}
-.tab .ct{font-family:var(--f-hand);font-size:15px;letter-spacing:0;background:#F28C5B;color:var(--ink);border-radius:var(--wob2);padding:0 8px;min-width:24px;line-height:1.5}
+.tab .ct{font-family:var(--f-hand);font-size:15px;letter-spacing:0;background:#F28C5B;color:#2B2723;border-radius:var(--wob2);padding:0 8px;min-width:24px;line-height:1.5}
 
 /* Prompt view */
 .pv{display:flex;flex-direction:column;gap:8px;padding-top:20px}
@@ -281,6 +340,7 @@ dialog.sheet[open]{animation:up .22s ease-out}
 .stepper output{min-width:52px;text-align:center;font-family:var(--f-letter);font-size:38px;line-height:1}
 textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);background:transparent;padding:10px 12px;font-size:17px;min-height:84px;resize:vertical;
   background-image:repeating-linear-gradient(transparent 0 27px, var(--rule) 27px 28px);background-position:0 9px;line-height:28px}
+.linkbtn.more{align-self:flex-start;padding:2px 0}
 .selist{display:flex;flex-wrap:wrap;gap:6px}
 .switch{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:18px;cursor:pointer}
 .switch input{appearance:none;width:28px;height:28px;border:1.6px solid var(--ink);border-radius:var(--wob);flex:none;cursor:pointer;position:relative;margin:0;background:transparent}
@@ -321,9 +381,10 @@ textarea{width:100%;border:1.6px solid var(--ink);border-radius:var(--wob);backg
       <div class="tools">
         <label class="search"><svg viewBox="0 0 24 24"><path d="M10.5 4.2c3.6-.3 6.4 2.4 6.3 5.9-.1 3.4-2.8 6.1-6.2 6.1-3.5 0-6.2-2.7-6.2-6 .1-3.3 2.6-5.8 6.1-6z"/><path d="m15.4 15.2 4.9 5.1"/></svg>
           <input id="q" type="search" placeholder="search for an ingredient…" autocomplete="off" aria-label="Search ingredients"></label>
-        <div class="toggles"><button class="toggle" id="yearToggle" aria-pressed="false" title="Include ingredients available all year">+ all-year</button><button class="toggle" id="nearToggle" aria-pressed="false" title="Include seasonal produce from nearby countries that's common in UK shops">+ nearby</button></div>
+        <button class="setbtn" id="setBtn" aria-label="Settings"><svg viewBox="0 0 24 24"><path d="M4 7.2c5.2-.3 10.6-.2 16 .1M4.2 12.1c5.3.2 10.5.1 15.7-.1M4 17c5.3-.2 10.7-.1 16 .1"/><circle cx="9" cy="7.2" r="2.1"/><circle cx="15.4" cy="12" r="2.1"/><circle cx="7.6" cy="17" r="2.1"/></svg><span>settings</span><i class="dot" id="setDot" hidden></i></button>
       </div>
       <div class="cats" id="cats" role="group" aria-label="Category"></div>
+      <div class="active" id="activeF" hidden></div>
     </header>
     <div id="pairBar" hidden></div>
     <div id="soon" class="soon"></div>
@@ -682,15 +743,16 @@ const BYNAME=Object.fromEntries(DATA.map(d=>[d.name,d]));
 /* storage */
 const KEY="seasonal-larder-v1";
 function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({sel:[...state.sel].map(id=>BYID[id]&&BYID[id].name).filter(Boolean),opts:state.opts,year:state.year,near:state.near}))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({sel:[...state.sel].map(id=>BYID[id]&&BYID[id].name).filter(Boolean),opts:state.opts,year:state.year,near:state.near,prefs:state.prefs}))}catch(e){}}
 
 const NOW=new Date().getMonth()+1;
 const saved=load()||{};
 const state={
   month:NOW, cat:"all", q:"", year:!!saved.year, near:!!saved.near,
   sel:new Set((saved.sel||[]).map(n=>BYNAME[n]&&BYNAME[n].id).filter(Boolean)),
-  opts:Object.assign({servings:2,diet:"No restrictions",time:"Up to 45 min",meal:"Dinner",mood:[],skill:"Confident home cook",ideas:4,mode:"core",pantry:true,uk:true,extra:""},saved.opts||{})
+  opts:Object.assign({servings:2,diet:"No restrictions",time:"Up to 45 min",meal:"Dinner",mood:[],cuisine:[],style:"",skill:"Confident home cook",ideas:4,mode:"core",pantry:true,uk:true,extra:""},saved.opts||{})
 };
+state.prefs=Object.assign({hideAnimal:true,avoid:"",kit:[],cupboard:"",theme:"auto",welcomed:false},saved.prefs||{});
 if(!saved.sel){["Kale","Celeriac","Partridge","Bramley apples"].forEach(n=>BYNAME[n]&&state.sel.add(BYNAME[n].id))}
 
 const $=s=>document.querySelector(s);
@@ -708,12 +770,16 @@ function renderMonths(){
 }
 $("#months").addEventListener("click",e=>{const b=e.target.closest(".mbtn");if(!b)return;state.month=+b.dataset.m;renderMonths();renderList()});
 
+/* categories hidden by the diet setting, when "hide what I don't eat" is on */
+function hiddenCats(){if(!state.prefs||!state.prefs.hideAnimal)return [];const d=state.opts.diet;
+  return d==="Vegan"?["meat","fish","shell","dairy"]:d==="Vegetarian"?["meat","fish","shell"]:d==="Pescatarian"?["meat"]:[]}
 function visible(){
   const q=state.q.trim().toLowerCase();
-  const pw=state.pairWith&&BYID[state.pairWith];
+  const pw=state.pairWith&&BYID[state.pairWith];const hid=hiddenCats();
   return DATA.filter(d=>{
     if(state.month&&!d.months.has(state.month))return false;
     if(d.imp&&!state.near&&!state.sel.has(d.id))return false;
+    if(hid.length&&(hid.includes(d.cat)||(hid.includes("dairy")&&d.dairy))&&!state.sel.has(d.id))return false;
     if(pw){if(d===pw||!linked(d,pw))return false}
     else if(state.month&&d.year&&!state.year&&d.cat!=="plant"&&!state.sel.has(d.id))return false;
     if(q&&!d.name.toLowerCase().includes(q)&&!CATNAME[d.cat].toLowerCase().includes(q))return false;
@@ -727,8 +793,15 @@ function renderCats(base){
 }
 $("#cats").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;state.cat=b.dataset.c;renderList()});
 $("#q").addEventListener("input",e=>{state.q=e.target.value;renderList()});
-$("#yearToggle").addEventListener("click",()=>{state.year=!state.year;save();renderList()});
-$("#nearToggle").addEventListener("click",()=>{state.near=!state.near;save();renderList();toast(state.near?"Showing produce from nearby countries too":"UK produce only")});
+$("#setBtn").addEventListener("click",openSettings);
+$("#activeF").addEventListener("click",e=>{const b=e.target.closest("[data-off]");if(!b)return;const k=b.dataset.off;
+  if(k==="year")state.year=false;if(k==="near")state.near=false;if(k==="hide")state.prefs.hideAnimal=false;save();renderList()});
+function renderActive(){
+  const a=[];if(state.near)a.push(["near","+ nearby countries"]);if(state.year&&state.month)a.push(["year","+ all-year items"]);
+  const hid=hiddenCats();if(hid.length)a.push(["hide",(state.opts.diet+" view").toLowerCase()]);
+  const el=$("#activeF");el.hidden=!a.length;el.innerHTML=a.map(([k,l])=>`<button data-off="${k}" aria-label="Turn off ${l}">${esc(l)} ×</button>`).join("");
+  $("#setDot").hidden=!a.length;
+}
 
 function notes(d){
   const m=state.month;let b="";
@@ -811,6 +884,7 @@ function renderCard(){
       <div class="fact"><h4>choosing</h4><p>${esc(inf.choose)}</p></div>
       <div class="fact"><h4>storing</h4><p>${esc(inf.store)}</p></div>
       <div class="fact"><h4>prep &amp; cooking</h4><p>${esc(inf.prep)}</p></div>
+      ${inf.waste?`<div class="fact waste"><h4>nothing wasted</h4><p>${esc(inf.waste)}</p></div>`:""}
       ${pairs.length?`<div class="fact"><h4>goes well with</h4><div class="pairs">${pairs.map(p=>`<button class="chip c-${p.cat}${p.months.has(mo)?"":" off"}" data-card="${p.id}" aria-pressed="${state.sel.has(p.id)}">${ico(p.cat)}${esc(p.name)}</button>`).join("")}</div></div>`:""}
       ${inf.extras&&inf.extras.length?`<div class="fact"><h4>and from the cupboard</h4><div class="extras">${inf.extras.map(esc).join(" · ")}</div></div>`:""}
       ${PAIR[d.id]&&PAIR[d.id].size?`<button class="findpairs" data-pairwith="${d.id}">Show what goes with ${esc(d.name.toLowerCase())} →</button>`:""}
@@ -826,15 +900,97 @@ function renderCard(){
   <div class="card-foot"><button class="card-add${on?" on":""}" id="cardAdd">${on?"✓ In your basket":"+ Add to basket"}</button></div>`;
 }
 function openCard(id){
-  cardId=id;renderCard();const dlg=$("#card");
+  sheetMode="card";cardId=id;renderCard();const dlg=$("#card");
   if(!dlg.open){try{dlg.showModal()}catch(e){dlg.setAttribute("open","")}try{history.pushState({card:1},"")}catch(e){}}
   $("#cardIn").scrollTop=0;
 }
 function closeCard(fromPop){const dlg=$("#card");if(!dlg.open)return;try{dlg.close()}catch(e){dlg.removeAttribute("open")}cardId=null;
+  if(sheetMode==="welcome"){state.prefs.welcomed=true;save()}if(sheetMode==="settings")afterSettings();sheetMode=null;
   if(!fromPop){try{if(history.state&&history.state.card)history.back()}catch(e){}}}
 window.addEventListener("popstate",()=>{if($("#card").open)closeCard(true)});
 $("#card").addEventListener("cancel",e=>{e.preventDefault();closeCard()});
+/* Settings */
+const KIT=["No oven","Hob only","Air fryer","Slow cooker","Pressure cooker","Microwave","BBQ","Food processor"];
+const DIETS_ALL=["No restrictions","Vegetarian","Vegan","Pescatarian","Gluten-free","Dairy-free","Low-carb"];
+let sheetMode=null;
+function sheetOpen(){const dlg=$("#card");if(!dlg.open){try{dlg.showModal()}catch(e){dlg.setAttribute("open","")}try{history.pushState({card:1},"")}catch(e){}}$("#cardIn").scrollTop=0}
+const swRow=(id,label,on,sub)=>`<label class="switch"><span class="sw-txt">${label}${sub?`<small class="sub">${sub}</small>`:""}</span><input type="checkbox" data-pref="${id}" ${on?"checked":""}></label>`;
+function renderSettings(){
+  const pf=state.prefs,o=state.opts;
+  $("#cardIn").className="sheet-in c-fish";
+  $("#cardIn").innerHTML=`<div class="grab"></div>
+  <div class="card-head">${ico("herb")}<div><div class="cat">make it yours</div><h2 id="cardTitle">Settings</h2></div><button class="x" id="cardClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="setgroup"><h4>how you eat</h4>
+    <div class="field"><span class="lbl">diet</span><div class="opts" data-setopt="diet">${DIETS_ALL.map(v=>`<button class="chip c-veg" data-v="${esc(v)}" aria-pressed="${o.diet===v}">${esc(v)}</button>`).join("")}</div></div>
+    ${swRow("hideAnimal","Hide what I don't eat",pf.hideAnimal,"Follows your diet: vegan hides meat, fish and dairy; vegetarian hides meat and fish; pescatarian hides meat.")}
+    <div class="field"><span class="lbl">usually cooking for</span><div class="stepper"><button data-sstep="-1" aria-label="Fewer people">−</button><output id="setServ">${o.servings}</output><button data-sstep="1" aria-label="More people">+</button></div></div>
+    <div class="field"><label class="lbl" for="setAvoid">allergies, dislikes, things to avoid</label><input class="line" id="setAvoid" value="${esc(pf.avoid)}" placeholder="e.g. no coriander, nut allergy, not too spicy"></div>
+  </div>
+  <div class="setgroup"><h4>your kitchen</h4>
+    <div class="field"><span class="lbl">kit &amp; limits</span><div class="opts" data-setmulti="kit">${KIT.map(v=>`<button class="chip c-nut" data-v="${esc(v)}" aria-pressed="${pf.kit.includes(v)}">${esc(v)}</button>`).join("")}</div></div>
+    <div class="field"><label class="lbl" for="setCup">always in the cupboard</label><input class="line" id="setCup" value="${esc(pf.cupboard)}" placeholder="e.g. miso, anchovies, harissa, good stock, parmesan"></div>
+    <p class="hint">These go into every recipe prompt.</p>
+  </div>
+  <div class="setgroup"><h4>what to show</h4>
+    ${swRow("near","Produce from nearby countries",state.near,"Seasonal fruit and veg from Spain, Italy, France and so on that's common in UK shops.")}
+    ${swRow("year","All-year ingredients",state.year,"Things like beef, chicken, bay and cultivated mushrooms. Veggie &amp; vegan proteins always show.")}
+  </div>
+  <div class="setgroup"><h4>look</h4>
+    <div class="field"><span class="lbl">theme</span><div class="opts" data-setopt="theme">${[["auto","Match my phone"],["light","Paper (light)"],["dark","Kitchen at night (dark)"]].map(([k,l])=>`<button class="chip c-any" data-v="${k}" aria-pressed="${pf.theme===k}">${l}</button>`).join("")}</div></div>
+  </div>
+  <div class="setgroup"><button class="linkbtn" id="showWelcome">Show the welcome again</button></div>
+  <div class="card-foot"><button class="card-add on" id="setDone">Done</button></div>`;
+}
+function openSettings(){sheetMode="settings";cardId=null;renderSettings();sheetOpen()}
+function afterSettings(){save();renderList();renderTray();if(view==="prompt")renderPrompt()}
+
+/* Welcome */
+function openWelcome(){sheetMode="welcome";cardId=null;
+  $("#cardIn").className="sheet-in c-veg";
+  $("#cardIn").innerHTML=`<div class="grab"></div>
+  <div class="welcome">
+    <div class="script">welcome to the</div><h2 class="big c-veg" id="cardTitle">Seasonal Larder</h2>
+    <p class="about">What's good in the UK right now, and a quick way to turn it into dinner.</p>
+    <ol class="wsteps">
+      <li class="c-veg"><span class="num">1</span>${ico("veg")}<div><b>Pick what's in season</b><p>Tap an ingredient to add it to your basket. Tap the <span class="info-ex">i</span> to read about it.</p></div></li>
+      <li class="c-fish"><span class="num">2</span>${ico("herb")}<div><b>Make it yours</b><p>Open <b>settings</b> to set your diet, your kitchen and what's always in the cupboard.</p></div></li>
+      <li class="c-fruit"><span class="num">3</span>${ico("fruit")}<div><b>Get recipe ideas</b><p>Go to <b>Recipe prompt</b> and send your basket to ChatGPT, Claude or any AI app.</p></div></li>
+    </ol>
+  </div>
+  <div class="card-foot"><button class="card-add" id="welcomeGo">Start cooking</button></div>`;
+  sheetOpen();
+}
+
+/* Theme */
+let themeSetByUs=false;
+function applyTheme(){const t=state.prefs.theme,root=document.documentElement;
+  if(t==="light"||t==="dark"){root.setAttribute("data-theme",t);themeSetByUs=true}
+  else if(themeSetByUs){root.removeAttribute("data-theme");themeSetByUs=false}
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",getComputedStyle(root).getPropertyValue("--paper").trim()||"#FDFCF8")}
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyTheme)}catch(e){}
+
+$("#card").addEventListener("input",e=>{
+  if(e.target.id==="setAvoid"){state.prefs.avoid=e.target.value;save()}
+  if(e.target.id==="setCup"){state.prefs.cupboard=e.target.value;save()}
+});
+$("#card").addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.pref;if(!k)return;
+  if(k==="hideAnimal")state.prefs.hideAnimal=e.target.checked;
+  if(k==="near")state.near=e.target.checked;
+  if(k==="year")state.year=e.target.checked;
+  afterSettings();
+});
 $("#card").addEventListener("click",e=>{
+  if(sheetMode==="settings"){
+    const so=e.target.closest("[data-setopt] .chip");if(so){const g=so.parentElement.dataset.setopt,v=so.dataset.v;
+      if(g==="diet")state.opts.diet=v;if(g==="theme"){state.prefs.theme=v;applyTheme()}
+      so.parentElement.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));afterSettings();return}
+    const sm=e.target.closest("[data-setmulti] .chip");if(sm){const v=sm.dataset.v,a=state.prefs.kit,i=a.indexOf(v);i>-1?a.splice(i,1):a.push(v);sm.setAttribute("aria-pressed",a.includes(v));save();if(view==="prompt")renderPrompt();return}
+    const st=e.target.closest("[data-sstep]");if(st){state.opts.servings=Math.min(20,Math.max(1,state.opts.servings+ +st.dataset.sstep));$("#setServ").textContent=state.opts.servings;save();return}
+    if(e.target.closest("#setDone")){closeCard();afterSettings();return}
+    if(e.target.closest("#showWelcome")){openWelcome();return}
+  }
+  if(sheetMode==="welcome"&&e.target.closest("#welcomeGo")){state.prefs.welcomed=true;save();closeCard();return}
+
   if(e.target===$("#card")){closeCard();return}
   if(e.target.closest("#cardClose")){closeCard();return}
   if(e.target.closest("#cardAdd")){toggle(cardId);renderCard();return}
@@ -924,7 +1080,7 @@ async function makePicture(){
 }
 let picBlob=null,picURL=null;
 async function openPicture(){
-  const m=state.month||NOW,dlg=$("#card"),el=$("#cardIn");cardId=null;
+  const m=state.month||NOW,dlg=$("#card"),el=$("#cardIn");cardId=null;sheetMode="picture";
   el.className="sheet-in c-veg";
   el.innerHTML=`<div class="grab"></div><div class="card-head">${ico("veg")}<div><div class="cat">share this month</div><h2 id="cardTitle">${MONTHS[m-1]}</h2></div><button class="x" id="cardClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <div class="pic-wrap"><img id="picImg" alt="A hand-drawn poster of what's at its best in ${MONTHS[m-1]}"><p class="hint" id="picHint">Drawing your picture…</p><div class="pic-actions" id="picActions"></div></div>`;
@@ -949,9 +1105,7 @@ function renderList(){
   const items=state.cat==="all"?base:base.filter(d=>d.cat===state.cat);
   const m=state.month;
   $("#countN").textContent=items.length;
-  $("#yearToggle").setAttribute("aria-pressed",state.year);
-  $("#yearToggle").hidden=!m;
-  $("#nearToggle").setAttribute("aria-pressed",state.near);
+  renderActive();
   if(!items.length&&state.pairWith){$("#list").innerHTML=`<div class="empty">Nothing in season ${m?"in "+MONTHS[m-1]+" ":""}goes with this one.<br>Try another month, or tap <b>All</b>.</div>`;return}
   if(!items.length){$("#list").innerHTML=`<div class="empty">Nothing matches “${esc(state.q)}”${m?" in "+MONTHS[m-1]:""}.<br>Try another month, or tap <b>All</b>.</div>`;return}
   let html="";
@@ -1009,9 +1163,17 @@ $("#tray").addEventListener("click",e=>{
 const DIETS=["No restrictions","Vegetarian","Vegan","Pescatarian","Gluten-free","Dairy-free","Low-carb"];
 const TIMES=["Under 20 min","Up to 30 min","Up to 45 min","Up to 1 hour","Slow weekend cook"];
 const MEALS=["Dinner","Lunch","Brunch","Starter","Side dish","Dessert","Batch cook","Dinner party"];
-const MOODS=["Comfort food","Light & fresh","British classic","Italian","French","Spanish","Middle Eastern","Indian","East Asian","Surprise me"];
+const CUISINES_TOP=["British","Italian","French","Spanish","Middle Eastern","Indian","Chinese","Japanese"];
+const CUISINES_MORE=["Greek","Turkish","Persian","North African","West African","Caribbean","Mexican","Thai","Vietnamese","Korean","Sri Lankan","Nordic","Eastern European","Portuguese","American"];
+const MOODS=["Comfort food","Light & fresh","Healthy","Spicy","Quick & easy","Budget","One-pot","Showstopper","Date night","Kid-friendly","Sunday lunch","Al fresco"];
+let moreCuisine=false;
+/* carry over picks from the old combined list */
+(function(){const o=state.opts,all=[...CUISINES_TOP,...CUISINES_MORE],old=o.mood||[];
+  const map={"British classic":"British","East Asian":"Chinese"};
+  old.forEach(v=>{const c=map[v]||v;if(all.includes(c)&&!o.cuisine.includes(c))o.cuisine.push(c)});
+  o.mood=old.filter(v=>MOODS.includes(v));})();
 const SKILLS=["Keep it simple","Confident home cook","Show-off / ambitious"];
-const CHIPCOL={meal:"c-fruit",time:"c-fish",diet:"c-veg",mood:"c-meat",skill:"c-nut",ideas:"c-wild"};
+const CHIPCOL={meal:"c-fruit",time:"c-fish",diet:"c-veg",mood:"c-meat",cuisine:"c-shell",skill:"c-nut",ideas:"c-wild"};
 
 function chips(name,list,cur,multi){return `<div class="opts" data-opt="${name}"${multi?' data-multi="1"':""}>`+list.map(v=>`<button class="chip ${CHIPCOL[name]}" data-v="${esc(v)}" aria-pressed="${multi?cur.includes(v):cur===v}">${esc(v)}</button>`).join("")+"</div>"}
 
@@ -1034,9 +1196,16 @@ function buildPrompt(){
   L.push(`- Servings: ${o.servings}`);
   L.push(`- Total time available: ${o.time}`);
   if(o.diet!=="No restrictions")L.push(`- Dietary requirement: ${o.diet}. Every recipe must meet this strictly${/Vegetarian|Vegan|Pescatarian/.test(o.diet)?"; leave out any of my ingredients that don't fit and say so":""}.`);
-  if(o.mood.length)L.push(`- Cuisine / mood: ${o.mood.join(", ")}`);
+  if(o.cuisine.length===1)L.push(`- Cuisine: ${o.cuisine[0]}`);
+  if(o.cuisine.length>1)L.push(`- Cuisines: ${o.cuisine.join(", ")}. Spread the ideas across these, and only combine them in one dish where the flavours work together.`);
+  if(o.mood.length)L.push(`- Mood / style: ${o.mood.join(", ")}`);
+  if(o.style.trim())L.push(`- Also in the style of: ${o.style.trim()}`);
   L.push(`- Skill level: ${o.skill}`);
   L.push(o.pantry?`- Assume a normal store cupboard (oils, butter, flour, stock, spices, onions, garlic, lemons, eggs, dairy). List anything else I'd need to buy.`:`- Keep extra ingredients to a minimum and list every additional item I'd need to buy.`);
+  const pf=state.prefs;
+  if(pf.avoid.trim())L.push(`- Please avoid: ${pf.avoid.trim()}`);
+  if(pf.kit.length)L.push(`- My kitchen: ${pf.kit.join(", ")}. Only suggest recipes that work with this.`);
+  if(pf.cupboard.trim())L.push(`- I also have in: ${pf.cupboard.trim()}. Use these where they help.`);
   if(o.extra.trim())L.push(`- Also: ${o.extra.trim()}`);
   L.push("");
   L.push("## Format for each recipe");
@@ -1071,7 +1240,10 @@ function renderPrompt(){
     <div class="field"><span class="lbl">what for?</span>${chips("meal",MEALS,o.meal)}</div>
     <div class="field"><span class="lbl">how much time?</span>${chips("time",TIMES,o.time)}</div>
     <div class="field"><span class="lbl">any diet?</span>${chips("diet",DIETS,o.diet)}</div>
-    <div class="field"><span class="lbl">cuisine or mood (pick any)</span>${chips("mood",MOODS,o.mood,true)}</div>
+    <div class="field"><span class="lbl">cuisine (pick any, or none for a mix)</span>${chips("cuisine",(moreCuisine||o.cuisine.some(c=>CUISINES_MORE.includes(c)))?[...CUISINES_TOP,...CUISINES_MORE]:CUISINES_TOP,o.cuisine,true)}
+      ${(moreCuisine||o.cuisine.some(c=>CUISINES_MORE.includes(c)))?"":`<button class="linkbtn more" id="moreCuisine">more cuisines…</button>`}</div>
+    <div class="field"><span class="lbl">mood (pick any)</span>${chips("mood",MOODS,o.mood,true)}</div>
+    <div class="field"><label class="lbl" for="optStyle">or type your own</label><input class="line" id="optStyle" value="${esc(o.style)}" placeholder="e.g. Georgian, street food, French bistro"></div>
     <div class="field"><span class="lbl">how ambitious?</span>${chips("skill",SKILLS,o.skill)}</div>
     <div class="field"><span class="lbl">how many ideas?</span>${chips("ideas",["3","4","5","6"],String(o.ideas))}</div>
     <label class="switch">Assume a normal store cupboard<input type="checkbox" id="optPantry" ${o.pantry?"checked":""}></label>
@@ -1099,7 +1271,8 @@ $("#pvBody").addEventListener("click",e=>{
   const c=e.target.closest(".opts .chip");if(c){const g=c.parentElement,k=g.dataset.opt,v=c.dataset.v;
     if(g.dataset.multi){const i=o[k].indexOf(v);i>-1?o[k].splice(i,1):o[k].push(v)}else{o[k]=k==="ideas"?+v:v}
     g.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",g.dataset.multi?o[k].includes(b.dataset.v):String(o[k])===b.dataset.v));
-    save();$("#promptOut").textContent=buildPrompt();return}
+    save();$("#promptOut").textContent=buildPrompt();if(k==="diet")renderList();return}
+  if(e.target.closest("#moreCuisine")){moreCuisine=true;renderPrompt();return}
   if(e.target.closest("#copyBtn"))copyPrompt();
   if(e.target.closest("#shareBtn"))sharePrompt();
   const sd=e.target.closest("[data-send]");if(sd){const x=SENDTO[+sd.dataset.send];const text=buildPrompt();
@@ -1110,7 +1283,7 @@ $("#pvBody").addEventListener("change",e=>{const o=state.opts;
   if(e.target.id==="optPantry")o.pantry=e.target.checked;
   if(e.target.id==="optUk")o.uk=e.target.checked;
   save();$("#promptOut").textContent=buildPrompt()});
-$("#pvBody").addEventListener("input",e=>{if(e.target.id==="optExtra"){state.opts.extra=e.target.value;save();$("#promptOut").textContent=buildPrompt()}});
+$("#pvBody").addEventListener("input",e=>{if(e.target.id==="optStyle"){state.opts.style=e.target.value;save();$("#promptOut").textContent=buildPrompt();return}if(e.target.id==="optExtra"){state.opts.extra=e.target.value;save();$("#promptOut").textContent=buildPrompt()}});
 
 const SENDTO=[
   {name:"ChatGPT",q:"https://chatgpt.com/?q=",home:"https://chatgpt.com/"},
@@ -1146,7 +1319,9 @@ function setView(v,fromHash){
 document.querySelector(".nav").addEventListener("click",e=>{const b=e.target.closest(".tab");if(b)setView(b.dataset.view)});
 window.addEventListener("hashchange",()=>setView(location.hash.slice(1),true));
 
+applyTheme();
 renderMonths();renderList();renderTray();
+if(!state.prefs.welcomed)setTimeout(openWelcome,350);
 setView(location.hash.slice(1)||"pick",true);
 })();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
